@@ -1,0 +1,15 @@
+Create a modern, professional React website for my Discord bot app "GifGetter". The app converts videos to GIFs directly within Discord. The website should incorporate AWS services for scalability, security, and functionality. Here are the key features and integrations:
+
+Homepage: An overview of GifGetter, explaining its purpose and how users can interact with the bot in Discord.
+Discord Login: Implement Discord OAuth login using Amazon Cognito to authenticate users and manage user accounts securely. This will allow users to log in and leave feedback on the website.
+Leave Feedback Feature: After logging in via Discord, users should be able to submit feedback. Use AWS Lambda functions to process the feedback and store it in Amazon DynamoDB.
+Replit Database: Use Amazon DynamoDB as the database to store user feedback, Discord user IDs, and bot interaction data. DynamoDB’s scalability will help manage data as your user base grows.
+AWS S3 for GIF Storage: When the bot converts videos to GIFs, store the resulting GIF files on Amazon S3. Provide users with a link to download or view the GIF.
+AI Features: Use Anthropic’s AI to analyze feedback data, categorize feedback into feature requests or bugs, and possibly suggest improvements or generate automated responses.
+Email Notifications: Use Amazon SES to send email notifications to users when their feedback is received or processed, or notify the development team about new feedback.
+Design: The site should have a responsive, modern design with clean, professional visuals. The color scheme should be sleek and minimal, and the layout should be user-friendly.
+Additional Notes:
+
+Feedback Page: A simple page where users can leave feedback after logging in via Discord. Use a form to collect feedback, and AWS Lambda functions to process it.
+No Complex Dashboard: No need for a full user dashboard; just a feedback form and user interaction details would be sufficient.
+Scalability: Ensure the app is scalable and can handle an increasing number of users and feedback, leveraging AWS services like Lambda and DynamoDB.

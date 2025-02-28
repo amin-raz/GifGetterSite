@@ -1,0 +1,44 @@
+import type { Express } from "express";
+import { createServer } from "http";
+import { storage } from "./storage";
+import { insertUserSchema, insertFeedbackSchema } from "@shared/schema";
+
+export async function registerRoutes(app: Express) {
+  const httpServer = createServer(app);
+
+  // Auth endpoints
+  app.post("/api/auth/discord", async (req, res) => {
+    try {
+      const userData = insertUserSchema.parse(req.body);
+      const existingUser = await storage.getUser(userData.discordId);
+      
+      if (existingUser) {
+        res.json(existingUser);
+        return;
+      }
+
+      const newUser = await storage.createUser(userData);
+      res.json(newUser);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid user data" });
+    }
+  });
+
+  // Feedback endpoints
+  app.get("/api/feedback", async (_req, res) => {
+    const feedback = await storage.getFeedback();
+    res.json(feedback);
+  });
+
+  app.post("/api/feedback", async (req, res) => {
+    try {
+      const feedbackData = insertFeedbackSchema.parse(req.body);
+      const feedback = await storage.createFeedback(feedbackData);
+      res.json(feedback);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid feedback data" });
+    }
+  });
+
+  return httpServer;
+}
