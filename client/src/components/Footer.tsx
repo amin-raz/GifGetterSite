@@ -21,8 +21,13 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Documentation
+                <a href="/#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">
+                  How It Works
+                </a>
+              </li>
+              <li>
+                <a href="/#why-choose" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Why Choose GifGetter
                 </a>
               </li>
             </ul>
