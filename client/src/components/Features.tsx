@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Video, Sparkles, Zap, Share2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 const features = [
   {
@@ -24,32 +25,60 @@ const features = [
   },
 ];
 
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 }
+};
+
 export function Features() {
   return (
     <section className="py-16 bg-muted/50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-12"
+        >
           <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
             Powerful Features
           </h2>
           <p className="mt-4 text-muted-foreground text-lg">
             Everything you need to create perfect GIFs right in Discord
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <motion.div
+          variants={container}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+        >
           {features.map((feature) => (
-            <Card key={feature.title}>
-              <CardHeader>
-                <feature.icon className="h-10 w-10 text-primary" />
-                <CardTitle className="mt-4">{feature.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">{feature.description}</p>
-              </CardContent>
-            </Card>
+            <motion.div key={feature.title} variants={item}>
+              <Card>
+                <CardHeader>
+                  <feature.icon className="h-10 w-10 text-primary" />
+                  <CardTitle className="mt-4">{feature.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">{feature.description}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

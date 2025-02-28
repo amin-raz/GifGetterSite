@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { SiDiscord } from "react-icons/si";
+import { ThemeToggle } from "./ThemeToggle";
 
 export function Navigation() {
   return (
@@ -16,6 +17,7 @@ export function Navigation() {
         <div className="flex-1" />
 
         <div className="flex items-center space-x-4">
+          <ThemeToggle />
           <Link href="/feedback">
             <Button variant="ghost">Feedback</Button>
           </Link>
