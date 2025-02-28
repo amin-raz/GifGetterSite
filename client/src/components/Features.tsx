@@ -69,7 +69,7 @@ export function Features() {
             <motion.div key={feature.title} variants={item}>
               <Card>
                 <CardHeader>
-                  <feature.icon className="h-10 w-10 text-primary" />
+                  <feature.icon className="h-10 w-10 text-foreground transition-colors" />
                   <CardTitle className="mt-4">{feature.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
