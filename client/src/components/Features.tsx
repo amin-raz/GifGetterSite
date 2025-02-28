@@ -67,13 +67,15 @@ export function Features() {
         >
           {features.map((feature) => (
             <motion.div key={feature.title} variants={item}>
-              <Card>
+              <Card className="h-full">
                 <CardHeader>
                   <feature.icon className="h-10 w-10 text-foreground transition-colors" />
                   <CardTitle className="mt-4">{feature.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">{feature.description}</p>
+                  <p className="text-muted-foreground leading-relaxed line-clamp-2">
+                    {feature.description}
+                  </p>
                 </CardContent>
               </Card>
             </motion.div>
