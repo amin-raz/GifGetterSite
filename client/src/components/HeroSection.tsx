@@ -5,7 +5,7 @@ import { Video } from "lucide-react";
 export function HeroSection() {
   return (
     <section className="relative overflow-hidden pt-24 pb-16">
-      <div className="container relative">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
           <div className="space-y-8">
             <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl">

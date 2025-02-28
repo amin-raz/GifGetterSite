@@ -27,7 +27,7 @@ const features = [
 export function Features() {
   return (
     <section className="py-16 bg-muted/50">
-      <div className="container">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
             Powerful Features
@@ -36,7 +36,7 @@ export function Features() {
             Everything you need to create perfect GIFs right in Discord
           </p>
         </div>
-        
+
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {features.map((feature) => (
             <Card key={feature.title}>
