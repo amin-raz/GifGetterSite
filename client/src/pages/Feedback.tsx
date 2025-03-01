@@ -6,19 +6,27 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { insertFeedbackSchema } from "@shared/schema";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
+import type { User } from "@shared/schema";
 import { getDiscordLoginUrl } from "@/lib/auth";
 
 export default function Feedback() {
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
+
+  const { data: user, isLoading } = useQuery<User>({ 
+    queryKey: ['/api/auth/me'],
+  });
+
   const form = useForm({
     resolver: zodResolver(insertFeedbackSchema),
     defaultValues: {
       content: "",
       type: "feature",
-      userId: "mock-user-id", // In real app, this would come from auth
+      userId: user?.discordId || "",
     },
   });
 
@@ -34,6 +42,20 @@ export default function Feedback() {
       form.reset();
     },
   });
+
+  // Redirect to login if not authenticated
+  if (!isLoading && !user) {
+    window.location.href = getDiscordLoginUrl();
+    return null;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin h-6 w-6 border-2 border-current border-t-transparent rounded-full" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pt-24 pb-16 bg-background">
@@ -83,14 +105,7 @@ export default function Feedback() {
                     )}
                   />
 
-                  <div className="flex justify-end gap-4">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => window.location.href = getDiscordLoginUrl()}
-                    >
-                      Login with Discord
-                    </Button>
+                  <div className="flex justify-end">
                     <Button type="submit" disabled={mutation.isPending}>
                       {mutation.isPending ? "Submitting..." : "Submit Feedback"}
                     </Button>

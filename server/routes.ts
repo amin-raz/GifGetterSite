@@ -7,17 +7,35 @@ export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
 
   // Auth endpoints
+  app.get("/api/auth/me", async (req, res) => {
+    // Check if user is authenticated via session
+    if (!req.session?.userId) {
+      res.status(401).json({ error: "Not authenticated" });
+      return;
+    }
+
+    const user = await storage.getUser(req.session.userId);
+    if (!user) {
+      res.status(401).json({ error: "User not found" });
+      return;
+    }
+
+    res.json(user);
+  });
+
   app.post("/api/auth/discord", async (req, res) => {
     try {
       const userData = insertUserSchema.parse(req.body);
       const existingUser = await storage.getUser(userData.discordId);
-      
+
       if (existingUser) {
+        req.session.userId = existingUser.discordId;
         res.json(existingUser);
         return;
       }
 
       const newUser = await storage.createUser(userData);
+      req.session.userId = newUser.discordId;
       res.json(newUser);
     } catch (error) {
       res.status(400).json({ error: "Invalid user data" });
@@ -31,6 +49,12 @@ export async function registerRoutes(app: Express) {
   });
 
   app.post("/api/feedback", async (req, res) => {
+    // Check if user is authenticated
+    if (!req.session?.userId) {
+      res.status(401).json({ error: "Must be logged in to submit feedback" });
+      return;
+    }
+
     try {
       const feedbackData = insertFeedbackSchema.parse(req.body);
       const feedback = await storage.createFeedback(feedbackData);
