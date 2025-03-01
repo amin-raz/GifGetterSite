@@ -7,13 +7,21 @@ import { storage } from "./storage";
 
 const MemoryStoreSession = MemoryStore(session);
 
+// Get domain from environment variables
+const domain = process.env.NODE_ENV === 'production' 
+  ? process.env.APP_DOMAIN // AWS Amplify domain
+  : 'localhost:5000';
+
+const protocol = domain?.includes('localhost') ? 'http' : 'https';
+const callbackURL = `${protocol}://${domain}/api/auth/discord/callback`;
+
 export function setupAuth(app: Express) {
   // Session configuration
   app.use(session({
     store: new MemoryStoreSession({
       checkPeriod: 86400000 // Prune expired entries every 24h
     }),
-    secret: 'your-secret-key', // In production, use an environment variable
+    secret: process.env.SESSION_SECRET || 'development-secret-key',
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -42,12 +50,12 @@ export function setupAuth(app: Express) {
   passport.use(new DiscordStrategy({
     clientID: process.env.VITE_DISCORD_CLIENT_ID!,
     clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-    callbackURL: `https://${process.env.REPLIT_SLUG}.${process.env.REPLIT_SLUG}.repl.co/api/auth/discord/callback`,
+    callbackURL,
     scope: ['identify']
   }, async (accessToken, refreshToken, profile, done) => {
     try {
       let user = await storage.getUser(profile.id);
-      
+
       if (!user) {
         user = await storage.createUser({
           discordId: profile.id,
@@ -55,7 +63,7 @@ export function setupAuth(app: Express) {
           avatar: profile.avatar ? `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png` : null
         });
       }
-      
+
       return done(null, user);
     } catch (err) {
       return done(err as Error);
