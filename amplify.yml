@@ -3,12 +3,13 @@ frontend:
   phases:
     preBuild:
       commands:
+        - nvm use 20
         - npm ci
     build:
       commands:
         - npm run build
   artifacts:
-    baseDirectory: dist
+    baseDirectory: dist/public
     files:
       - '**/*'
   cache:
@@ -30,3 +31,16 @@ frontend:
   builders:
     - name: run-server
       command: 'NODE_ENV=production node dist/index.js'
+backend:
+  phases:
+    build:
+      commands:
+        - npm ci
+    postBuild:
+      commands:
+        - npm run db:push
+  artifacts:
+    baseDirectory: dist
+    files:
+      - '**/*'
+      - '!public/**/*'
