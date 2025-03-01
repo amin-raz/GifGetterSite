@@ -33,10 +33,11 @@ backend:
     preBuild:
       commands:
         - nvm use 20
+        - npm ci
     build:
       commands:
-        - npm ci
         - npx drizzle-kit push:pg -- --config=drizzle.config.ts
+        - npm run build
   artifacts:
     baseDirectory: dist
     files:
