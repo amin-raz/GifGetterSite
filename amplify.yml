@@ -25,6 +25,8 @@ frontend:
           value: '1; mode=block'
         - key: 'X-Content-Type-Options'
           value: 'nosniff'
+        - key: 'Referrer-Policy'
+          value: 'strict-origin-when-cross-origin'
   builders:
     - name: run-server
-      command: 'node dist/index.js'
+      command: 'NODE_ENV=production node dist/index.js'
