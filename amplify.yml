@@ -28,19 +28,18 @@ frontend:
           value: 'nosniff'
         - key: 'Referrer-Policy'
           value: 'strict-origin-when-cross-origin'
-  builders:
-    - name: run-server
-      command: 'NODE_ENV=production node dist/index.js'
 backend:
   phases:
     build:
       commands:
+        - nvm use 20
         - npm ci
-    postBuild:
-      commands:
         - npm run db:push
   artifacts:
     baseDirectory: dist
     files:
       - '**/*'
       - '!public/**/*'
+  cache:
+    paths:
+      - node_modules/**/*
