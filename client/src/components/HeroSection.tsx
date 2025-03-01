@@ -40,9 +40,11 @@ export function HeroSection() {
             className="relative aspect-video rounded-lg overflow-hidden shadow-2xl"
           >
             <img 
-              src="https://images.unsplash.com/photo-1586953208448-b95a79798f07"
+              src="https://images.unsplash.com/photo-1586953208448-b95a79798f07?auto=format&fit=crop&w=800&q=80"
               alt="Discord bot interface"
-              className="object-cover"
+              className="object-cover w-full h-full"
+              loading="lazy"
+              decoding="async"
             />
           </motion.div>
         </div>

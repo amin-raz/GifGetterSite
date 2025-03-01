@@ -35,7 +35,12 @@ export function Footer() {
           <div>
             <h3 className="font-semibold mb-3">Connect</h3>
             <div className="flex space-x-4">
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a 
+                href="https://discord.com/oauth2/authorize?client_id=1299941868724949214"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
                 <SiDiscord className="h-6 w-6" />
               </a>
               <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">

@@ -21,10 +21,16 @@ export function Navigation() {
           <Link href="/feedback">
             <Button variant="ghost">Feedback</Button>
           </Link>
-          <Button>
-            Add to Discord
-            <SiDiscord className="ml-2 h-4 w-4" />
-          </Button>
+          <a
+            href="https://discord.com/oauth2/authorize?client_id=1299941868724949214"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button>
+              Add to Discord
+              <SiDiscord className="ml-2 h-4 w-4" />
+            </Button>
+          </a>
         </div>
       </div>
     </nav>
