@@ -34,9 +34,10 @@ backend:
       commands:
         - nvm use 20
         - npm ci
+        - npm install drizzle-kit@latest
     build:
       commands:
-        - npx drizzle-kit push:pg -- --config=drizzle.config.ts
+        - npx drizzle-kit push:pg --config=drizzle.config.ts
         - npm run build
   artifacts:
     baseDirectory: dist
