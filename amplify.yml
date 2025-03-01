@@ -30,11 +30,13 @@ frontend:
           value: 'strict-origin-when-cross-origin'
 backend:
   phases:
-    build:
+    preBuild:
       commands:
         - nvm use 20
+    build:
+      commands:
         - npm ci
-        - npm run db:push
+        - npx drizzle-kit push:pg -- --config=drizzle.config.ts
   artifacts:
     baseDirectory: dist
     files:
