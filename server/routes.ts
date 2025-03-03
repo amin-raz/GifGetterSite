@@ -35,7 +35,7 @@ export async function registerRoutes(app: Express) {
     clientSecret: process.env.DISCORD_CLIENT_SECRET!,
     callbackURL: "/api/auth/discord/callback",
     scope: ["identify"]
-  }, async (accessToken, refreshToken, profile, done) => {
+  }, async (_accessToken, _refreshToken, profile, done) => {
     try {
       let user = await storage.getUser(profile.id);
 
@@ -67,12 +67,18 @@ export async function registerRoutes(app: Express) {
   });
 
   // Auth endpoints
+  app.get("/api/auth/discord", (req, res, next) => {
+    // Store the return URL in the session
+    req.session.returnTo = req.query.returnTo as string || '/';
+    passport.authenticate('discord')(req, res, next);
+  });
+
   app.get("/api/auth/discord/callback",
     passport.authenticate("discord", {
       failureRedirect: "/"
     }),
     (req, res) => {
-      // After successful authentication, redirect back to the original page
+      // Redirect to the stored return URL or home
       const redirectTo = req.session.returnTo || '/';
       delete req.session.returnTo;
       res.redirect(redirectTo);
@@ -94,13 +100,6 @@ export async function registerRoutes(app: Express) {
     });
   });
 
-  // Store the return path before authentication
-  app.get("/api/auth/discord", (req, res, next) => {
-    req.session.returnTo = req.query.returnTo as string || '/';
-    passport.authenticate("discord")(req, res, next);
-  });
-
-
   // Feedback endpoints
   app.get("/api/feedback", async (_req, res) => {
     const feedback = await storage.getFeedback();
@@ -114,8 +113,10 @@ export async function registerRoutes(app: Express) {
     }
 
     try {
-      const feedbackData = insertFeedbackSchema.parse(req.body);
-      const feedback = await storage.createFeedback(feedbackData);
+      const feedback = await storage.createFeedback({
+        ...req.body,
+        userId: (req.user as any).discordId
+      });
       res.json(feedback);
     } catch (error) {
       res.status(400).json({ error: "Invalid feedback data" });
