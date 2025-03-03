@@ -12,6 +12,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 // Lazy load pages
 const Home = lazy(() => import("@/pages/Home"));
 const Feedback = lazy(() => import("@/pages/Feedback"));
+const GifConverter = lazy(() => import("@/pages/GifConverter"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 
 function Router() {
@@ -24,6 +25,7 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/feedback" component={Feedback} />
+        <Route path="/converter" component={GifConverter} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>

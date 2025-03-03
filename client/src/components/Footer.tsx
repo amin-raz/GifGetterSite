@@ -1,4 +1,5 @@
 import { SiDiscord, SiGithub } from "react-icons/si";
+import { Link } from "wouter";
 
 export function Footer() {
   return (
@@ -16,18 +17,18 @@ export function Footer() {
             <h3 className="font-semibold mb-3">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <a href="/feedback" className="text-muted-foreground hover:text-foreground transition-colors">
+                <Link href="/feedback" className="text-muted-foreground hover:text-foreground transition-colors">
                   Submit Feedback
-                </a>
+                </Link>
+              </li>
+              <li>
+                <Link href="/converter" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Web Converter
+                </Link>
               </li>
               <li>
                 <a href="/#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">
                   How It Works
-                </a>
-              </li>
-              <li>
-                <a href="/#why-choose" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Why Choose GifGetter
                 </a>
               </li>
             </ul>
