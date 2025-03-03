@@ -24,9 +24,7 @@ export function ProtectedRoute({
   }
 
   if (authStatus !== 'authenticated') {
-    // Store the current path in localStorage before redirecting
-    localStorage.setItem('redirectPath', location);
-    window.location.href = getDiscordLoginUrl();
+    window.location.href = getDiscordLoginUrl(location);
     return null;
   }
 

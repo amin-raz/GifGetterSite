@@ -8,15 +8,10 @@ const domain = import.meta.env.VITE_APP_DOMAIN || window.location.host;
 const protocol = domain.includes('localhost') ? 'http' : 'https';
 export const DISCORD_REDIRECT_URI = `${protocol}://${domain}/api/auth/discord/callback`;
 
-export function getDiscordLoginUrl() {
-  const params = new URLSearchParams({
-    client_id: DISCORD_CLIENT_ID,
-    redirect_uri: DISCORD_REDIRECT_URI,
-    response_type: "code",
-    scope: "identify",
-  });
-
-  return `https://discord.com/api/oauth2/authorize?${params}`;
+export function getDiscordLoginUrl(returnPath?: string) {
+  const returnTo = returnPath || window.location.pathname;
+  const authEndpoint = `/api/auth/discord?returnTo=${encodeURIComponent(returnTo)}`;
+  return authEndpoint;
 }
 
 export async function loginWithDiscord(code: string): Promise<User> {

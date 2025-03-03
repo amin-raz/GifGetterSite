@@ -1,14 +1,33 @@
 import type { Express } from "express";
 import { createServer } from "http";
 import { storage } from "./storage";
-import { insertUserSchema, insertFeedbackSchema } from "@shared/schema";
 import passport from "passport";
 import { Strategy as DiscordStrategy } from "passport-discord";
 import session from 'express-session';
+import MemoryStore from 'memorystore';
 
+const SessionStore = MemoryStore(session);
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
+
+  // Session configuration
+  app.use(session({
+    secret: process.env.SESSION_SECRET!,
+    resave: false,
+    saveUninitialized: true,
+    store: new SessionStore({
+      checkPeriod: 86400000 // prune expired entries every 24h
+    }),
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      sameSite: 'lax'
+    }
+  }));
+
+  // Initialize Passport and restore authentication state from session
+  app.use(passport.initialize());
+  app.use(passport.session());
 
   // Discord OAuth Strategy
   passport.use(new DiscordStrategy({
@@ -34,23 +53,18 @@ export async function registerRoutes(app: Express) {
     }
   }));
 
-  app.use(session({ secret: process.env.SESSION_SECRET!, resave: false, saveUninitialized: true }));
-  app.use(passport.initialize());
-  app.use(passport.session());
-
-  passport.serializeUser((user, done) => {
+  passport.serializeUser((user: any, done) => {
     done(null, user.discordId);
   });
 
-  passport.deserializeUser(async (id, done) => {
+  passport.deserializeUser(async (id: string, done) => {
     try {
       const user = await storage.getUser(id);
       done(null, user);
     } catch (error) {
-      done(error as Error);
+      done(error);
     }
   });
-
 
   // Auth endpoints
   app.get("/api/auth/discord/callback",
@@ -58,20 +72,19 @@ export async function registerRoutes(app: Express) {
       failureRedirect: "/"
     }),
     (req, res) => {
-      // Get the stored redirect path from localStorage
-      const redirectPath = req.session.redirectPath || '/';
-      // Clear the stored path
-      delete req.session.redirectPath;
-      res.redirect(redirectPath);
+      // After successful authentication, redirect back to the original page
+      const redirectTo = req.session.returnTo || '/';
+      delete req.session.returnTo;
+      res.redirect(redirectTo);
     }
   );
 
-  app.get("/api/auth/me", async (req, res) => {
-    if (!req.isAuthenticated()) {
+  app.get("/api/auth/me", (req, res) => {
+    if (req.isAuthenticated()) {
+      res.json(req.user);
+    } else {
       res.status(401).json({ error: "Not authenticated" });
-      return;
     }
-    res.json(req.user);
   });
 
   app.post("/api/auth/logout", (req, res, next) => {
@@ -80,6 +93,13 @@ export async function registerRoutes(app: Express) {
       res.sendStatus(200);
     });
   });
+
+  // Store the return path before authentication
+  app.get("/api/auth/discord", (req, res, next) => {
+    req.session.returnTo = req.query.returnTo as string || '/';
+    passport.authenticate("discord")(req, res, next);
+  });
+
 
   // Feedback endpoints
   app.get("/api/feedback", async (_req, res) => {
