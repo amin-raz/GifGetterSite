@@ -13,7 +13,7 @@ export function ProtectedRoute({
   const { authStatus } = useAuthenticator();
   const [location] = useLocation();
 
-  if (authStatus === 'loading') {
+  if (authStatus === 'configuring' || authStatus === 'loading') {
     return (
       <Route path={path}>
         <div className="flex items-center justify-center min-h-screen">

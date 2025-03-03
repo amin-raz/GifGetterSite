@@ -4,6 +4,8 @@ import { storage } from "./storage";
 import { insertUserSchema, insertFeedbackSchema } from "@shared/schema";
 import passport from "passport";
 import { Strategy as DiscordStrategy } from "passport-discord";
+import session from 'express-session';
+
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
@@ -32,14 +34,35 @@ export async function registerRoutes(app: Express) {
     }
   }));
 
+  app.use(session({ secret: process.env.SESSION_SECRET!, resave: false, saveUninitialized: true }));
+  app.use(passport.initialize());
+  app.use(passport.session());
+
+  passport.serializeUser((user, done) => {
+    done(null, user.discordId);
+  });
+
+  passport.deserializeUser(async (id, done) => {
+    try {
+      const user = await storage.getUser(id);
+      done(null, user);
+    } catch (error) {
+      done(error as Error);
+    }
+  });
+
+
   // Auth endpoints
   app.get("/api/auth/discord/callback",
     passport.authenticate("discord", {
       failureRedirect: "/"
     }),
     (req, res) => {
-      // Get the original path from localStorage and redirect there
-      res.redirect("/");
+      // Get the stored redirect path from localStorage
+      const redirectPath = req.session.redirectPath || '/';
+      // Clear the stored path
+      delete req.session.redirectPath;
+      res.redirect(redirectPath);
     }
   );
 

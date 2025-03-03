@@ -22,10 +22,10 @@ export function Navigation() {
     <nav className="fixed top-0 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 border-b">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-16 items-center">
         <Link href="/">
-          <a className="flex items-center space-x-2">
+          <Button variant="ghost" className="flex items-center space-x-2 px-0">
             <SiDiscord className="h-6 w-6" />
             <span className="font-bold text-xl">GifGetter</span>
-          </a>
+          </Button>
         </Link>
 
         <div className="flex-1" />
@@ -33,14 +33,17 @@ export function Navigation() {
         <div className="flex items-center space-x-4">
           <ThemeToggle />
           {authStatus === 'authenticated' && user ? (
-            <>
+            <div className="flex items-center space-x-4">
               <Link href="/feedback">
                 <Button variant="ghost">Feedback</Button>
+              </Link>
+              <Link href="/converter">
+                <Button variant="ghost">Web Converter</Button>
               </Link>
               <Avatar>
                 <AvatarImage 
                   src={user.attributes?.picture} 
-                  alt={user.username || 'User'} 
+                  alt={user.username} 
                 />
                 <AvatarFallback>
                   {user.username?.[0] || 'U'}
@@ -49,7 +52,7 @@ export function Navigation() {
               <Button variant="outline" onClick={handleSignOut}>
                 Sign Out
               </Button>
-            </>
+            </div>
           ) : (
             <Button 
               onClick={() => window.location.href = getDiscordLoginUrl()}
