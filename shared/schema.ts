@@ -1,35 +1,46 @@
-import { pgTable, text, serial, timestamp, json } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
-import { z } from "zod";
+import { Schema } from '@aws-amplify/datastore';
 
-export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  discordId: text("discord_id").notNull().unique(),
-  username: text("username").notNull(),
-  avatar: text("avatar"),
-});
+export const schema: Schema = {
+  models: {
+    User: {
+      name: 'User',
+      fields: {
+        id: { type: 'ID', isRequired: true, isArray: false },
+        discordId: { type: 'String', isRequired: true, isArray: false },
+        username: { type: 'String', isRequired: true, isArray: false },
+        avatar: { type: 'String', isRequired: false, isArray: false },
+      },
+    },
+    Feedback: {
+      name: 'Feedback',
+      fields: {
+        id: { type: 'ID', isRequired: true, isArray: false },
+        userId: { type: 'String', isRequired: true, isArray: false },
+        content: { type: 'String', isRequired: true, isArray: false },
+        type: { type: 'String', isRequired: true, isArray: false },
+        createdAt: { type: 'AWSDateTime', isRequired: false, isArray: false },
+      },
+    },
+  },
+  enums: {},
+  nonModels: {},
+  version: '1',
+};
 
-export const feedback = pgTable("feedback", {
-  id: serial("id").primaryKey(),
-  userId: text("user_id").notNull(),
-  content: text("content").notNull(),
-  type: text("type").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
-});
+export type User = {
+  id: string;
+  discordId: string;
+  username: string;
+  avatar?: string;
+};
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  discordId: true,
-  username: true,
-  avatar: true,
-});
+export type Feedback = {
+  id: string;
+  userId: string;
+  content: string;
+  type: string;
+  createdAt?: string;
+};
 
-export const insertFeedbackSchema = createInsertSchema(feedback).pick({
-  userId: true,
-  content: true,
-  type: true,
-});
-
-export type User = typeof users.$inferSelect;
-export type InsertUser = z.infer<typeof insertUserSchema>;
-export type Feedback = typeof feedback.$inferSelect;
-export type InsertFeedback = z.infer<typeof insertFeedbackSchema>;
+export type InsertUser = Omit<User, 'id'>;
+export type InsertFeedback = Omit<Feedback, 'id' | 'createdAt'>;

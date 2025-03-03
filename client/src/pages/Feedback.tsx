@@ -5,57 +5,81 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { insertFeedbackSchema } from "@shared/schema";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
-import type { User } from "@shared/schema";
-import { getDiscordLoginUrl } from "@/lib/auth";
+import { generateClient } from 'aws-amplify/api';
+import { useAuthenticator } from '@aws-amplify/ui-react';
+import { z } from 'zod';
+
+const client = generateClient();
+
+const feedbackSchema = z.object({
+  content: z.string().min(1, "Feedback is required"),
+  type: z.enum(["feature", "bug", "other"]),
+});
+
+type FeedbackForm = z.infer<typeof feedbackSchema>;
+
+// GraphQL mutation
+const createFeedback = /* GraphQL */ `
+  mutation CreateFeedback(
+    $input: CreateFeedbackInput!
+  ) {
+    createFeedback(input: $input) {
+      id
+      content
+      type
+      createdAt
+    }
+  }
+`;
 
 export default function Feedback() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
+  const { user, authStatus } = useAuthenticator();
 
-  const { data: user, isLoading } = useQuery<User>({ 
-    queryKey: ['/api/auth/me'],
-  });
-
-  const form = useForm({
-    resolver: zodResolver(insertFeedbackSchema),
+  const form = useForm<FeedbackForm>({
+    resolver: zodResolver(feedbackSchema),
     defaultValues: {
       content: "",
       type: "feature",
-      userId: user?.discordId || "",
     },
   });
 
-  const mutation = useMutation({
-    mutationFn: async (data: any) => {
-      return apiRequest("POST", "/api/feedback", data);
-    },
-    onSuccess: () => {
+  // Redirect to authentication if not logged in
+  if (authStatus !== 'authenticated') {
+    setLocation('/');
+    return null;
+  }
+
+  const onSubmit = async (data: FeedbackForm) => {
+    try {
+      await client.graphql({
+        query: createFeedback,
+        variables: {
+          input: {
+            userId: user.username,
+            content: data.content,
+            type: data.type,
+          }
+        }
+      });
+
       toast({
         title: "Feedback submitted",
         description: "Thank you for your feedback!",
       });
+
       form.reset();
-    },
-  });
-
-  // Redirect to login if not authenticated
-  if (!isLoading && !user) {
-    window.location.href = getDiscordLoginUrl();
-    return null;
-  }
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin h-6 w-6 border-2 border-current border-t-transparent rounded-full" />
-      </div>
-    );
-  }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to submit feedback. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen pt-24 pb-16 bg-background">
@@ -67,7 +91,7 @@ export default function Feedback() {
             </CardHeader>
             <CardContent>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit((data) => mutation.mutate(data))} className="space-y-6">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                   <FormField
                     control={form.control}
                     name="type"
@@ -106,8 +130,8 @@ export default function Feedback() {
                   />
 
                   <div className="flex justify-end">
-                    <Button type="submit" disabled={mutation.isPending}>
-                      {mutation.isPending ? "Submitting..." : "Submit Feedback"}
+                    <Button type="submit" disabled={form.formState.isSubmitting}>
+                      {form.formState.isSubmitting ? "Submitting..." : "Submit Feedback"}
                     </Button>
                   </div>
                 </form>

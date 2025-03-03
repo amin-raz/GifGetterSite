@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { AmplifyProvider } from "@/components/AmplifyProvider";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 // Lazy load pages
@@ -31,18 +32,20 @@ function Router() {
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="light" storageKey="gifgetter-ui-theme">
-      <QueryClientProvider client={queryClient}>
-        <div className="min-h-screen flex flex-col">
-          <Navigation />
-          <main className="flex-1">
-            <Router />
-          </main>
-          <Footer />
-        </div>
-        <Toaster />
-      </QueryClientProvider>
-    </ThemeProvider>
+    <AmplifyProvider>
+      <ThemeProvider defaultTheme="light" storageKey="gifgetter-ui-theme">
+        <QueryClientProvider client={queryClient}>
+          <div className="min-h-screen flex flex-col">
+            <Navigation />
+            <main className="flex-1">
+              <Router />
+            </main>
+            <Footer />
+          </div>
+          <Toaster />
+        </QueryClientProvider>
+      </ThemeProvider>
+    </AmplifyProvider>
   );
 }
 

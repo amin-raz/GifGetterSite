@@ -2,16 +2,20 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { SiDiscord } from "react-icons/si";
 import { ThemeToggle } from "./ThemeToggle";
-import { useQuery } from "@tanstack/react-query";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { getDiscordLoginUrl } from "@/lib/auth";
-import type { User } from "@shared/schema";
+import { useAuthenticator } from '@aws-amplify/ui-react';
+import { signOut } from 'aws-amplify/auth';
 
 export function Navigation() {
-  const { data: user } = useQuery<User>({ 
-    queryKey: ['/api/auth/me'],
-    refetchOnWindowFocus: true
-  });
+  const { user, authStatus } = useAuthenticator();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   return (
     <nav className="fixed top-0 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 border-b">
@@ -27,19 +31,22 @@ export function Navigation() {
 
         <div className="flex items-center space-x-4">
           <ThemeToggle />
-          {user ? (
+          {authStatus === 'authenticated' ? (
             <>
               <Link href="/feedback">
                 <Button variant="ghost">Feedback</Button>
               </Link>
               <Avatar>
-                <AvatarImage src={user.avatar} alt={user.username} />
-                <AvatarFallback>{user.username[0]}</AvatarFallback>
+                <AvatarImage src={user?.attributes?.picture} alt={user?.username} />
+                <AvatarFallback>{user?.username?.[0]}</AvatarFallback>
               </Avatar>
+              <Button variant="outline" onClick={handleSignOut}>
+                Sign Out
+              </Button>
             </>
           ) : (
             <Button 
-              onClick={() => window.location.href = getDiscordLoginUrl()}
+              onClick={() => window.location.href = '/api/auth/discord'}
               variant="outline"
             >
               <SiDiscord className="mr-2 h-4 w-4" />

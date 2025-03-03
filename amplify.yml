@@ -3,7 +3,6 @@ frontend:
   phases:
     preBuild:
       commands:
-        - nvm use 20
         - npm ci
     build:
       commands:
@@ -28,25 +27,3 @@ frontend:
           value: 'nosniff'
         - key: 'Referrer-Policy'
           value: 'strict-origin-when-cross-origin'
-backend:
-  phases:
-    preBuild:
-      commands:
-        - nvm use 20
-        - npm ci
-        - 'echo "Database URL available: ${DATABASE_URL:+yes}"'
-        - 'echo "Running database migration..."'
-        - 'NODE_OPTIONS="--loader tsx/esm" npx drizzle-kit push:pg || echo "First attempt failed, trying alternative..."'
-        - 'if [ $? -ne 0 ]; then NODE_OPTIONS="--no-warnings --loader tsx/esm" DATABASE_URL="$DATABASE_URL" npx drizzle-kit push:pg; fi'
-        - 'echo "Database migration completed"'
-    build:
-      commands:
-        - npm run build
-  artifacts:
-    baseDirectory: dist
-    files:
-      - '**/*'
-      - '!public/**/*'
-  cache:
-    paths:
-      - node_modules/**/*
