@@ -31,14 +31,19 @@ export function Navigation() {
 
         <div className="flex items-center space-x-4">
           <ThemeToggle />
-          {authStatus === 'authenticated' ? (
+          {authStatus === 'authenticated' && user ? (
             <>
               <Link href="/feedback">
                 <Button variant="ghost">Feedback</Button>
               </Link>
               <Avatar>
-                <AvatarImage src={user?.attributes?.picture} alt={user?.username} />
-                <AvatarFallback>{user?.username?.[0]}</AvatarFallback>
+                <AvatarImage 
+                  src={user.attributes?.picture} 
+                  alt={user.username || 'User'} 
+                />
+                <AvatarFallback>
+                  {user.username?.[0] || 'U'}
+                </AvatarFallback>
               </Avatar>
               <Button variant="outline" onClick={handleSignOut}>
                 Sign Out

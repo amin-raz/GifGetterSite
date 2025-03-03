@@ -18,29 +18,12 @@ npm install -g @aws-amplify/cli
 
 2. Initialize your Amplify project:
 ```bash
-amplify init
+chmod +x scripts/init-amplify.sh
+./scripts/init-amplify.sh
+# Follow the prompts to configure your backend
 ```
 
-3. Add API with GraphQL:
-```bash
-amplify add api
-# Choose GraphQL when prompted
-# Use the schema from schema.graphql when asked
-```
-
-4. Add auth for Discord OAuth:
-```bash
-amplify add auth
-# Choose social provider and select Discord
-```
-
-5. Add storage for GIFs:
-```bash
-amplify add storage
-# Choose S3 when prompted
-```
-
-6. Push all services:
+3. Push all services:
 ```bash
 amplify push
 ```
@@ -51,5 +34,25 @@ amplify push
 npm install
 npm run dev
 ```
+
+## Backend Structure
+
+The application uses AWS Amplify to provide:
+- GraphQL API using AWS AppSync
+- Authentication through Amazon Cognito with Discord OAuth
+- S3 storage for GIF files
+- DynamoDB for data persistence
+
+### GraphQL Schema
+The main entities in our schema:
+- User: Stores Discord user information
+- Feedback: Stores user feedback and suggestions
+- GIF: Stores information about converted GIFs
+
+### Authentication Flow
+1. User clicks "Login with Discord"
+2. Cognito handles OAuth flow with Discord
+3. On success, user is redirected back with tokens
+4. Frontend receives authenticated user session
 
 Built with React, Tailwind CSS, and powered by AWS Amplify and Discord's OAuth system.
