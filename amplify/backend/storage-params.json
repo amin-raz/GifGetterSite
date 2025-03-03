@@ -1,0 +1,9 @@
+{
+  "resourceName": "gifgettercontent",
+  "bucketName": "gifgetter-content",
+  "storageAccess": "authAndGuest",
+  "guestAccess": ["read"],
+  "authenticatedAccess": ["create", "read", "update", "delete"],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}

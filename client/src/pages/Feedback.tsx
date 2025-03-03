@@ -10,6 +10,7 @@ import { useLocation } from "wouter";
 import { generateClient } from 'aws-amplify/api';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { z } from 'zod';
+import { GifUploader } from "@/components/GifUploader";
 
 const client = generateClient();
 
@@ -84,7 +85,16 @@ export default function Feedback() {
   return (
     <div className="min-h-screen pt-24 pb-16 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-2xl mx-auto space-y-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Test GIF Upload</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <GifUploader />
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle>Submit Feedback</CardTitle>
