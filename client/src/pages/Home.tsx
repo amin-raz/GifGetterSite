@@ -10,8 +10,8 @@ export default function Home() {
       <HeroSection />
       <Features />
       <HowItWorks />
-      <WebConverter />
       <WhyChoose />
+      <WebConverter />
     </div>
   );
 }
