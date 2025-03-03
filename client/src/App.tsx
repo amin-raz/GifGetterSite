@@ -8,6 +8,7 @@ import { Footer } from "@/components/Footer";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AmplifyProvider } from "@/components/AmplifyProvider";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { ProtectedRoute } from "@/lib/ProtectedRoute";
 
 // Lazy load pages
 const Home = lazy(() => import("@/pages/Home"));
@@ -24,8 +25,8 @@ function Router() {
     }>
       <Switch>
         <Route path="/" component={Home} />
-        <Route path="/feedback" component={Feedback} />
-        <Route path="/converter" component={GifConverter} />
+        <ProtectedRoute path="/feedback" component={Feedback} />
+        <ProtectedRoute path="/converter" component={GifConverter} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>
