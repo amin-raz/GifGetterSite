@@ -5,6 +5,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { signOut } from 'aws-amplify/auth';
+import { getDiscordLoginUrl } from "@/lib/auth";
 
 export function Navigation() {
   const { user, authStatus } = useAuthenticator();
@@ -51,7 +52,7 @@ export function Navigation() {
             </>
           ) : (
             <Button 
-              onClick={() => window.location.href = '/api/auth/discord'}
+              onClick={() => window.location.href = getDiscordLoginUrl()}
               variant="outline"
             >
               <SiDiscord className="mr-2 h-4 w-4" />
