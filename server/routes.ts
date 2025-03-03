@@ -2,44 +2,60 @@ import type { Express } from "express";
 import { createServer } from "http";
 import { storage } from "./storage";
 import { insertUserSchema, insertFeedbackSchema } from "@shared/schema";
+import passport from "passport";
+import { Strategy as DiscordStrategy } from "passport-discord";
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
 
+  // Discord OAuth Strategy
+  passport.use(new DiscordStrategy({
+    clientID: process.env.VITE_DISCORD_CLIENT_ID!,
+    clientSecret: process.env.DISCORD_CLIENT_SECRET!,
+    callbackURL: "/api/auth/discord/callback",
+    scope: ["identify"]
+  }, async (accessToken, refreshToken, profile, done) => {
+    try {
+      let user = await storage.getUser(profile.id);
+
+      if (!user) {
+        user = await storage.createUser({
+          discordId: profile.id,
+          username: profile.username,
+          avatar: profile.avatar
+        });
+      }
+
+      return done(null, user);
+    } catch (error) {
+      return done(error as Error);
+    }
+  }));
+
   // Auth endpoints
+  app.get("/api/auth/discord/callback",
+    passport.authenticate("discord", {
+      failureRedirect: "/"
+    }),
+    (req, res) => {
+      // Get the original path from localStorage and redirect there
+      res.redirect("/");
+    }
+  );
+
   app.get("/api/auth/me", async (req, res) => {
-    // Check if user is authenticated via session
-    if (!req.session?.userId) {
+    if (!req.isAuthenticated()) {
       res.status(401).json({ error: "Not authenticated" });
       return;
     }
-
-    const user = await storage.getUser(req.session.userId);
-    if (!user) {
-      res.status(401).json({ error: "User not found" });
-      return;
-    }
-
-    res.json(user);
+    res.json(req.user);
   });
 
-  app.post("/api/auth/discord", async (req, res) => {
-    try {
-      const userData = insertUserSchema.parse(req.body);
-      const existingUser = await storage.getUser(userData.discordId);
-
-      if (existingUser) {
-        req.session.userId = existingUser.discordId;
-        res.json(existingUser);
-        return;
-      }
-
-      const newUser = await storage.createUser(userData);
-      req.session.userId = newUser.discordId;
-      res.json(newUser);
-    } catch (error) {
-      res.status(400).json({ error: "Invalid user data" });
-    }
+  app.post("/api/auth/logout", (req, res, next) => {
+    req.logout((err) => {
+      if (err) return next(err);
+      res.sendStatus(200);
+    });
   });
 
   // Feedback endpoints
@@ -49,8 +65,7 @@ export async function registerRoutes(app: Express) {
   });
 
   app.post("/api/feedback", async (req, res) => {
-    // Check if user is authenticated
-    if (!req.session?.userId) {
+    if (!req.isAuthenticated()) {
       res.status(401).json({ error: "Must be logged in to submit feedback" });
       return;
     }
