@@ -1,46 +1,31 @@
-import { Schema } from '@aws-amplify/datastore';
+import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { createInsertSchema } from 'drizzle-zod';
+import { z } from 'zod';
 
-export const schema: Schema = {
-  models: {
-    User: {
-      name: 'User',
-      fields: {
-        id: { type: 'ID', isRequired: true, isArray: false },
-        discordId: { type: 'String', isRequired: true, isArray: false },
-        username: { type: 'String', isRequired: true, isArray: false },
-        avatar: { type: 'String', isRequired: false, isArray: false },
-      },
-    },
-    Feedback: {
-      name: 'Feedback',
-      fields: {
-        id: { type: 'ID', isRequired: true, isArray: false },
-        userId: { type: 'String', isRequired: true, isArray: false },
-        content: { type: 'String', isRequired: true, isArray: false },
-        type: { type: 'String', isRequired: true, isArray: false },
-        createdAt: { type: 'AWSDateTime', isRequired: false, isArray: false },
-      },
-    },
-  },
-  enums: {},
-  nonModels: {},
-  version: '1',
-};
+export const users = pgTable('users', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  discordId: text('discord_id').notNull().unique(),
+  username: text('username').notNull(),
+  avatar: text('avatar'),
+  createdAt: timestamp('created_at').defaultNow(),
+});
 
-export type User = {
-  id: string;
-  discordId: string;
-  username: string;
-  avatar?: string;
-};
+// Create insert schema for users
+export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true });
 
-export type Feedback = {
-  id: string;
-  userId: string;
-  content: string;
-  type: string;
-  createdAt?: string;
-};
+// Export types
+export type User = typeof users.$inferSelect;
+export type InsertUser = z.infer<typeof insertUserSchema>;
 
-export type InsertUser = Omit<User, 'id'>;
-export type InsertFeedback = Omit<Feedback, 'id' | 'createdAt'>;
+// Export feedback types and schema
+export const feedback = pgTable('feedback', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: uuid('user_id').references(() => users.id),
+  content: text('content').notNull(),
+  type: text('type').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+export const insertFeedbackSchema = createInsertSchema(feedback).omit({ id: true, createdAt: true });
+export type Feedback = typeof feedback.$inferSelect;
+export type InsertFeedback = z.infer<typeof insertFeedbackSchema>;

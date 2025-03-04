@@ -1,6 +1,7 @@
 import express from "express";
 import { setupVite, serveStatic, log } from "./vite";
 import { registerRoutes } from "./routes";
+import { setupAuth } from "./auth";
 
 const app = express();
 
@@ -10,7 +11,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // IIFE to allow async/await
 (async () => {
-  // Register API routes first
+  // Set up authentication first
+  setupAuth(app);
+
+  // Register API routes
   const server = await registerRoutes(app);
 
   if (process.env.NODE_ENV === "development") {
