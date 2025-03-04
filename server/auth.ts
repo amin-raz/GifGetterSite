@@ -34,12 +34,18 @@ export function setupAuth(app: Express) {
   app.use(passport.session());
 
   // Set up Discord strategy
+  const callbackURL = process.env.NODE_ENV === 'production'
+    ? 'https://your-domain.repl.co/api/auth/discord/callback'  // Will be updated when deployed
+    : 'http://localhost:5000/api/auth/discord/callback';
+
+  console.log('Using Discord callback URL:', callbackURL);
+
   passport.use(
     new DiscordStrategy(
       {
         clientID: process.env.VITE_DISCORD_CLIENT_ID!,
         clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-        callbackURL: '/api/auth/discord/callback',
+        callbackURL,
         scope: ['identify', 'email']
       },
       async (_accessToken, _refreshToken, profile, done) => {
