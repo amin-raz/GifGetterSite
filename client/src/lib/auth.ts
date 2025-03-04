@@ -3,12 +3,13 @@ import type { User } from "@shared/schema";
 
 export const DISCORD_CLIENT_ID = import.meta.env.VITE_DISCORD_CLIENT_ID;
 
-export function getDiscordLoginUrl() {
+export function getDiscordLoginUrl(state?: string) {
   const params = new URLSearchParams({
     client_id: DISCORD_CLIENT_ID,
     redirect_uri: `${window.location.origin}/api/auth/discord/callback`,
     response_type: "code",
-    scope: "identify",
+    scope: "identify email",
+    ...(state ? { state } : {})
   });
 
   return `https://discord.com/api/oauth2/authorize?${params}`;

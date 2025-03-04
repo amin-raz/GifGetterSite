@@ -54,7 +54,7 @@ export function Navigation() {
             </div>
           ) : (
             <Button 
-              onClick={() => window.location.href = `https://discord.com/oauth2/authorize?client_id=${import.meta.env.VITE_DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + '/api/auth/discord/callback')}&response_type=code&scope=identify`}
+              onClick={() => window.location.href = getDiscordLoginUrl()}
               variant="outline"
             >
               <SiDiscord className="mr-2 h-4 w-4" />
@@ -65,4 +65,10 @@ export function Navigation() {
       </div>
     </nav>
   );
+}
+
+// Placeholder for the missing function.  This needs to be defined elsewhere.
+function getDiscordLoginUrl(): string {
+  //Implementation to generate Discord login URL goes here.  Example:
+  return `https://discord.com/oauth2/authorize?client_id=${import.meta.env.VITE_DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + '/api/auth/discord/callback')}&response_type=code&scope=identify`;
 }

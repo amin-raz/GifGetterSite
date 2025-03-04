@@ -1,6 +1,7 @@
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { Route, useLocation } from "wouter";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { getDiscordLoginUrl } from './auth';
 
 export function ProtectedRoute({
   path,
@@ -23,8 +24,7 @@ export function ProtectedRoute({
   }
 
   if (authStatus !== 'authenticated') {
-    const loginUrl = `https://discord.com/oauth2/authorize?client_id=${import.meta.env.VITE_DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + '/api/auth/discord/callback')}&response_type=code&scope=identify&state=${encodeURIComponent(location)}`;
-    window.location.href = loginUrl;
+    window.location.href = getDiscordLoginUrl(location);
     return null;
   }
 
