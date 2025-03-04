@@ -1,103 +1,45 @@
 import type { Express } from "express";
 import { createServer } from "http";
 import { storage } from "./storage";
-import passport from "passport";
-import { Strategy as DiscordStrategy } from "passport-discord";
-import session from 'express-session';
-import MemoryStore from 'memorystore';
-
-const SessionStore = MemoryStore(session);
+import { insertUserSchema, insertFeedbackSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
 
-  // Session configuration
-  app.use(session({
-    secret: process.env.SESSION_SECRET!,
-    resave: false,
-    saveUninitialized: true,
-    store: new SessionStore({
-      checkPeriod: 86400000 // prune expired entries every 24h
-    }),
-    cookie: {
-      secure: process.env.NODE_ENV === "production",
-      sameSite: 'lax'
+  // Auth endpoints
+  app.get("/api/auth/me", async (req, res) => {
+    // Check if user is authenticated via session
+    if (!req.session?.userId) {
+      res.status(401).json({ error: "Not authenticated" });
+      return;
     }
-  }));
 
-  // Initialize Passport and restore authentication state from session
-  app.use(passport.initialize());
-  app.use(passport.session());
+    const user = await storage.getUser(req.session.userId);
+    if (!user) {
+      res.status(401).json({ error: "User not found" });
+      return;
+    }
 
-  // Discord OAuth Strategy
-  passport.use(new DiscordStrategy({
-    clientID: process.env.VITE_DISCORD_CLIENT_ID!,
-    clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-    callbackURL: "/api/auth/discord/callback",
-    scope: ["identify"]
-  }, async (_accessToken, _refreshToken, profile, done) => {
+    res.json(user);
+  });
+
+  app.post("/api/auth/discord", async (req, res) => {
     try {
-      let user = await storage.getUser(profile.id);
+      const userData = insertUserSchema.parse(req.body);
+      const existingUser = await storage.getUser(userData.discordId);
 
-      if (!user) {
-        user = await storage.createUser({
-          discordId: profile.id,
-          username: profile.username,
-          avatar: profile.avatar
-        });
+      if (existingUser) {
+        req.session.userId = existingUser.discordId;
+        res.json(existingUser);
+        return;
       }
 
-      return done(null, user);
+      const newUser = await storage.createUser(userData);
+      req.session.userId = newUser.discordId;
+      res.json(newUser);
     } catch (error) {
-      return done(error as Error);
+      res.status(400).json({ error: "Invalid user data" });
     }
-  }));
-
-  passport.serializeUser((user: any, done) => {
-    done(null, user.discordId);
-  });
-
-  passport.deserializeUser(async (id: string, done) => {
-    try {
-      const user = await storage.getUser(id);
-      done(null, user);
-    } catch (error) {
-      done(error);
-    }
-  });
-
-  // Auth endpoints
-  app.get("/api/auth/discord", (req, res, next) => {
-    // Store the return URL in the session
-    req.session.returnTo = req.query.returnTo as string || '/';
-    passport.authenticate('discord')(req, res, next);
-  });
-
-  app.get("/api/auth/discord/callback",
-    passport.authenticate("discord", {
-      failureRedirect: "/"
-    }),
-    (req, res) => {
-      // Redirect to the stored return URL or home
-      const redirectTo = req.session.returnTo || '/';
-      delete req.session.returnTo;
-      res.redirect(redirectTo);
-    }
-  );
-
-  app.get("/api/auth/me", (req, res) => {
-    if (req.isAuthenticated()) {
-      res.json(req.user);
-    } else {
-      res.status(401).json({ error: "Not authenticated" });
-    }
-  });
-
-  app.post("/api/auth/logout", (req, res, next) => {
-    req.logout((err) => {
-      if (err) return next(err);
-      res.sendStatus(200);
-    });
   });
 
   // Feedback endpoints
@@ -107,16 +49,15 @@ export async function registerRoutes(app: Express) {
   });
 
   app.post("/api/feedback", async (req, res) => {
-    if (!req.isAuthenticated()) {
+    // Check if user is authenticated
+    if (!req.session?.userId) {
       res.status(401).json({ error: "Must be logged in to submit feedback" });
       return;
     }
 
     try {
-      const feedback = await storage.createFeedback({
-        ...req.body,
-        userId: (req.user as any).discordId
-      });
+      const feedbackData = insertFeedbackSchema.parse(req.body);
+      const feedback = await storage.createFeedback(feedbackData);
       res.json(feedback);
     } catch (error) {
       res.status(400).json({ error: "Invalid feedback data" });

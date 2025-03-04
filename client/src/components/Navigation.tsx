@@ -5,7 +5,6 @@ import { ThemeToggle } from "./ThemeToggle";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { signOut } from 'aws-amplify/auth';
-import { getDiscordLoginUrl } from "@/lib/auth";
 
 export function Navigation() {
   const { user, authStatus } = useAuthenticator();
@@ -55,23 +54,13 @@ export function Navigation() {
             </div>
           ) : (
             <Button 
-              onClick={() => window.location.href = getDiscordLoginUrl()}
+              onClick={() => window.location.href = `https://discord.com/oauth2/authorize?client_id=${import.meta.env.VITE_DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + '/api/auth/discord/callback')}&response_type=code&scope=identify`}
               variant="outline"
             >
               <SiDiscord className="mr-2 h-4 w-4" />
               Login with Discord
             </Button>
           )}
-          <a
-            href="https://discord.com/oauth2/authorize?client_id=1299941868724949214"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Button>
-              Add to Discord
-              <SiDiscord className="ml-2 h-4 w-4" />
-            </Button>
-          </a>
         </div>
       </div>
     </nav>

@@ -3,13 +3,15 @@ import type { User } from "@shared/schema";
 
 export const DISCORD_CLIENT_ID = import.meta.env.VITE_DISCORD_CLIENT_ID;
 
-export function getDiscordLoginUrl(returnPath?: string) {
-  // Use the current URL as the base for the auth endpoint
-  const baseUrl = window.location.origin;
-  const returnTo = returnPath || window.location.pathname;
-  const authUrl = `${baseUrl}/api/auth/discord?returnTo=${encodeURIComponent(returnTo)}`;
-  console.log('Auth URL:', authUrl); // Debug log
-  return authUrl;
+export function getDiscordLoginUrl() {
+  const params = new URLSearchParams({
+    client_id: DISCORD_CLIENT_ID,
+    redirect_uri: `${window.location.origin}/api/auth/discord/callback`,
+    response_type: "code",
+    scope: "identify",
+  });
+
+  return `https://discord.com/api/oauth2/authorize?${params}`;
 }
 
 export async function getCurrentUser(): Promise<User | null> {

@@ -12,28 +12,22 @@ amplify init \
   --providers "{\"awscloudformation\":{\"configLevel\":\"project\",\"useProfile\":false,\"accessKeyId\":\"$AWS_ACCESS_KEY_ID\",\"secretAccessKey\":\"$AWS_SECRET_ACCESS_KEY\",\"region\":\"us-east-1\"}}" \
   --yes
 
-# Add API
-amplify add api \
-  --apiName gifgetterapi \
-  --serviceType GraphQL \
-  --defaultAuthType "Amazon Cognito User Pool" \
-  --schemaPath "./shared/schema.graphql" \
-  --conflictResolution "AUTO_MERGE" \
-  --yes
-
 # Add Auth with Discord OAuth
 amplify add auth \
-  --serviceName gifgetterauth \
-  --providerPlugin cognito \
+  --service "Cognito" \
+  --serviceName "gifgetterauth" \
+  --providerPlugin "awscloudformation" \
   --requireMFA false \
-  --usernameAttributes email \
-  --socialProviders discord \
+  --usernameAttributes "email" \
+  --allowUnauthenticatedIdentities false \
+  --oAuth "{\"CallbackURLs\":[\"http://localhost:5000/\"],\"LogoutURLs\":[\"http://localhost:5000/\"],\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"email\",\"openid\",\"profile\"],\"socialProviders\":[\"discord\"]}" \
   --yes
 
 # Add Storage
 amplify add storage \
-  --serviceName gifgettercontent \
-  --bucketName gifgetter-content \
+  --service "S3" \
+  --resourceName "gifgettercontent" \
+  --bucketName "gifgetter-content" \
   --storageAccess "auth" \
   --yes
 
