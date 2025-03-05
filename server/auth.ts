@@ -11,7 +11,10 @@ const PostgresStore = connectPg(session);
 export function setupAuth(app: Express) {
   console.log('Setting up authentication...');
 
-  // Set up session middleware
+  // Trust first proxy
+  app.set('trust proxy', 1);
+
+  // Set up session middleware with updated cookie settings
   app.use(
     session({
       store: new PostgresStore({
@@ -22,8 +25,10 @@ export function setupAuth(app: Express) {
       secret: process.env.SESSION_SECRET!,
       resave: false,
       saveUninitialized: false,
+      proxy: true, // Required for secure cookies behind proxy
       cookie: {
         secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
         maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
       }
     })
@@ -34,7 +39,7 @@ export function setupAuth(app: Express) {
   app.use(passport.session());
 
   // Set up Discord strategy
-  const callbackURL = 'http://localhost:5000/api/auth/discord/callback';  // Exact match with Discord Developer Portal
+  const callbackURL = 'http://localhost:5000/api/auth/discord/callback';
   console.log('Using Discord callback URL:', callbackURL);
 
   passport.use(

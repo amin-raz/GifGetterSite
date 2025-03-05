@@ -3,16 +3,39 @@ import { Button } from "@/components/ui/button";
 import { SiDiscord } from "react-icons/si";
 import { ThemeToggle } from "./ThemeToggle";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { useAuthenticator } from '@aws-amplify/ui-react';
-import { signOut } from 'aws-amplify/auth';
+import { useEffect, useState } from 'react';
 import { getDiscordLoginUrl } from "@/lib/auth";
 
+type User = {
+  username: string;
+  avatar?: string;
+};
+
 export function Navigation() {
-  const { user, authStatus } = useAuthenticator();
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Check authentication status on component mount
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then(res => res.ok ? res.json() : null)
+      .then(user => {
+        setUser(user);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  }, []);
 
   const handleSignOut = async () => {
     try {
-      await signOut();
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+      setUser(null);
+      window.location.href = '/';
     } catch (error) {
       console.error('Error signing out:', error);
     }
@@ -32,35 +55,39 @@ export function Navigation() {
 
         <div className="flex items-center space-x-4">
           <ThemeToggle />
-          {authStatus === 'authenticated' && user ? (
-            <div className="flex items-center space-x-4">
-              <Link href="/feedback">
-                <Button variant="ghost">Feedback</Button>
-              </Link>
-              <Link href="/converter">
-                <Button variant="ghost">Web Converter</Button>
-              </Link>
-              <Avatar>
-                <AvatarImage 
-                  src={user.attributes?.picture} 
-                  alt={user.username} 
-                />
-                <AvatarFallback>
-                  {user.username?.[0] || 'U'}
-                </AvatarFallback>
-              </Avatar>
-              <Button variant="outline" onClick={handleSignOut}>
-                Sign Out
-              </Button>
-            </div>
-          ) : (
-            <Button 
-              onClick={() => window.location.href = getDiscordLoginUrl()}
-              variant="outline"
-            >
-              <SiDiscord className="mr-2 h-4 w-4" />
-              Login with Discord
-            </Button>
+          {!loading && (
+            <>
+              {user ? (
+                <div className="flex items-center space-x-4">
+                  <Link href="/feedback">
+                    <Button variant="ghost">Feedback</Button>
+                  </Link>
+                  <Link href="/converter">
+                    <Button variant="ghost">Web Converter</Button>
+                  </Link>
+                  <Avatar>
+                    <AvatarImage 
+                      src={user.avatar} 
+                      alt={user.username} 
+                    />
+                    <AvatarFallback>
+                      {user.username?.[0] || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <Button variant="outline" onClick={handleSignOut}>
+                    Sign Out
+                  </Button>
+                </div>
+              ) : (
+                <Button 
+                  onClick={() => window.location.href = getDiscordLoginUrl()}
+                  variant="outline"
+                >
+                  <SiDiscord className="mr-2 h-4 w-4" />
+                  Login with Discord
+                </Button>
+              )}
+            </>
           )}
         </div>
       </div>

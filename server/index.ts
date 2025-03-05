@@ -27,8 +27,14 @@ app.use(express.urlencoded({ extended: true }));
   console.log('Setting up API routes...');
   const server = await registerRoutes(app);
 
+  // Global error handler
+  app.use((err: any, req: any, res: any, next: any) => {
+    console.error('Server error:', err);
+    res.status(500).json({ error: 'Server error', message: err.message });
+  });
+
   if (process.env.NODE_ENV === "development") {
-    // In development, set up Vite middleware after API routes
+    // In development, set up Vite middleware AFTER auth and API routes
     console.log('Setting up Vite middleware for development...');
     await setupVite(app, server);
     server.listen(5000, "0.0.0.0", () => {
