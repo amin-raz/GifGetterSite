@@ -41,7 +41,7 @@ app.use(express.urlencoded({ extended: true }));
       log("Server started in development mode on port 5000");
     });
   } else {
-    // In production, serve static files
+    // In production, serve static files AFTER API routes
     console.log('Setting up static file serving for production...');
     try {
       serveStatic(app);

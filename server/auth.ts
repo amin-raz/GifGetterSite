@@ -25,7 +25,7 @@ export function setupAuth(app: Express) {
       secret: process.env.SESSION_SECRET!,
       resave: false,
       saveUninitialized: false,
-      proxy: true, // Required for secure cookies behind proxy
+      proxy: true,
       cookie: {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
@@ -39,7 +39,7 @@ export function setupAuth(app: Express) {
   app.use(passport.session());
 
   // Set up Discord strategy
-  const callbackURL = 'http://localhost:5000/api/auth/discord/callback';
+  const callbackURL = 'http://localhost:5000/api/auth/callback/discord';
   console.log('Using Discord callback URL:', callbackURL);
 
   passport.use(
@@ -53,12 +53,10 @@ export function setupAuth(app: Express) {
       async (_accessToken, _refreshToken, profile, done) => {
         console.log('Discord authentication callback with profile:', profile.username);
         try {
-          // Check if user exists
           let user = await storage.getUser(profile.id);
           console.log('Existing user found:', !!user);
 
           if (!user) {
-            // Create new user if doesn't exist
             console.log('Creating new user for:', profile.username);
             user = await storage.createUser({
               discordId: profile.id,
@@ -104,7 +102,7 @@ export function setupAuth(app: Express) {
     passport.authenticate('discord')(req, res, next);
   });
 
-  app.get('/api/auth/discord/callback',
+  app.get('/api/auth/callback/discord',
     (req, res, next) => {
       console.log('Received callback from Discord, query params:', req.query);
       passport.authenticate('discord', {
