@@ -11,19 +11,17 @@ export function AmplifyProvider({ children }: { children: ReactNode }) {
         console.log('Configuring Amplify in development mode');
       }
 
-      // Configure Amplify with Discord OAuth
+      // Configure Amplify
       const config = {
         Auth: {
           region: 'us-east-1',
-          // We'll use environment variables for these values
           oauth: {
-            domain: import.meta.env.VITE_AUTH_DOMAIN,
+            domain: 'discord.com/api/oauth2/authorize',
             scope: ['identify', 'email'],
-            redirectSignIn: window.location.origin,
-            redirectSignOut: window.location.origin,
+            redirectSignIn: 'http://localhost:5000/api/auth/discord/callback',
+            redirectSignOut: 'http://localhost:5000',
             responseType: 'code',
-            clientId: import.meta.env.VITE_DISCORD_CLIENT_ID,
-            clientSecret: import.meta.env.VITE_DISCORD_CLIENT_SECRET //Corrected typo here
+            clientId: import.meta.env.VITE_DISCORD_CLIENT_ID
           }
         }
       };

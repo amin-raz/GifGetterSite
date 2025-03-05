@@ -36,7 +36,7 @@ export function setupAuth(app: Express) {
   // Set up Discord strategy
   const callbackURL = process.env.NODE_ENV === 'production'
     ? 'https://your-domain.repl.co/api/auth/discord/callback'  // Will be updated when deployed
-    : 'http://localhost:5000/api/auth/discord/callback';
+    : 'http://localhost:5000/api/auth/discord/callback';  // Exact match with Discord Developer Portal
 
   console.log('Using Discord callback URL:', callbackURL);
 

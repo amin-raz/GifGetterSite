@@ -5,6 +5,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { signOut } from 'aws-amplify/auth';
+import { getDiscordLoginUrl } from "@/lib/auth";
 
 export function Navigation() {
   const { user, authStatus } = useAuthenticator();
@@ -65,10 +66,4 @@ export function Navigation() {
       </div>
     </nav>
   );
-}
-
-// Placeholder for the missing function.  This needs to be defined elsewhere.
-function getDiscordLoginUrl(): string {
-  //Implementation to generate Discord login URL goes here.  Example:
-  return `https://discord.com/oauth2/authorize?client_id=${import.meta.env.VITE_DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + '/api/auth/discord/callback')}&response_type=code&scope=identify`;
 }
