@@ -39,7 +39,7 @@ export function setupAuth(app: Express) {
   app.use(passport.session());
 
   // Set up Discord strategy
-  const callbackURL = 'http://localhost:5000/api/auth/callback/discord';
+  const callbackURL = 'http://localhost:5000/api/auth/discord/callback';
   console.log('Using Discord callback URL:', callbackURL);
 
   passport.use(
@@ -102,7 +102,7 @@ export function setupAuth(app: Express) {
     passport.authenticate('discord')(req, res, next);
   });
 
-  app.get('/api/auth/callback/discord',
+  app.get('/api/auth/discord/callback',
     (req, res, next) => {
       console.log('Received callback from Discord, query params:', req.query);
       passport.authenticate('discord', {
