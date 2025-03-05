@@ -10,17 +10,19 @@ const PostgresStore = connectPg(session);
 
 // Helper function to get the base URL for the application
 function getBaseUrl() {
-  if (process.env.NODE_ENV === 'development') {
-    return 'http://localhost:5000';
+  // Check if we're running on Replit by checking for Replit-specific environment variables
+  if (process.env.REPL_ID && process.env.REPL_SLUG) {
+    return `https://${process.env.REPL_SLUG}.${process.env.REPL_ID}.repl.co`;
   }
-  // Use the Replit domain when deployed
-  const replSlug = process.env.REPL_SLUG;
-  const replId = process.env.REPL_ID;
-  return `https://${replSlug}.${replId}.repl.co`;
+  // Fallback to localhost for development
+  return 'http://localhost:5000';
 }
 
 export function setupAuth(app: Express) {
   console.log('Setting up authentication...');
+
+  const baseUrl = getBaseUrl();
+  console.log('Using base URL for auth:', baseUrl); // Debug log
 
   // Trust first proxy
   app.set('trust proxy', 1);
@@ -50,7 +52,6 @@ export function setupAuth(app: Express) {
   app.use(passport.session());
 
   // Set up Discord strategy with environment-aware callback URL
-  const baseUrl = getBaseUrl();
   const callbackURL = `${baseUrl}/api/auth/discord/callback`;
   console.log('Using Discord callback URL:', callbackURL);
 

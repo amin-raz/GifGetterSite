@@ -5,15 +5,17 @@ export const DISCORD_CLIENT_ID = import.meta.env.VITE_DISCORD_CLIENT_ID;
 
 // Helper function to get the base URL for the application
 function getBaseUrl() {
-  if (import.meta.env.DEV) {
-    return 'http://localhost:5000';
+  // Check if we're running on Replit
+  if (window.location.hostname.includes('replit.dev')) {
+    return `https://${window.location.hostname}`;
   }
-  // Use the Replit domain when deployed
-  return `https://${window.location.hostname}`;
+  // Fallback to localhost for development
+  return 'http://localhost:5000';
 }
 
 export function getDiscordLoginUrl(state?: string) {
   const baseUrl = getBaseUrl();
+  console.log('Using base URL for Discord auth:', baseUrl); // Debug log
   const params = new URLSearchParams({
     client_id: DISCORD_CLIENT_ID,
     redirect_uri: `${baseUrl}/api/auth/discord/callback`,
