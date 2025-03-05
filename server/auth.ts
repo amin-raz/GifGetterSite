@@ -10,9 +10,9 @@ const PostgresStore = connectPg(session);
 
 // Helper function to get the base URL for the application
 function getBaseUrl() {
-  // Check if we're running on Replit by checking for Replit-specific environment variables
+  // Check if we're running on Replit
   if (process.env.REPL_ID && process.env.REPL_SLUG) {
-    return `https://${process.env.REPL_SLUG}.${process.env.REPL_ID}.repl.co`;
+    return `https://cd8b2f32-42e4-4c51-bc8a-8f1cfb255c3e-00-1fk8ng1yhc5k7.janeway.replit.dev`;
   }
   // Fallback to localhost for development
   return 'http://localhost:5000';
