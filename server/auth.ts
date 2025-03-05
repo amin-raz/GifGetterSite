@@ -8,6 +8,17 @@ import { Express } from 'express';
 
 const PostgresStore = connectPg(session);
 
+// Helper function to get the base URL for the application
+function getBaseUrl() {
+  if (process.env.NODE_ENV === 'development') {
+    return 'http://localhost:5000';
+  }
+  // Use the Replit domain when deployed
+  const replSlug = process.env.REPL_SLUG;
+  const replId = process.env.REPL_ID;
+  return `https://${replSlug}.${replId}.repl.co`;
+}
+
 export function setupAuth(app: Express) {
   console.log('Setting up authentication...');
 
@@ -38,8 +49,9 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  // Set up Discord strategy
-  const callbackURL = 'http://localhost:5000/api/auth/discord/callback';
+  // Set up Discord strategy with environment-aware callback URL
+  const baseUrl = getBaseUrl();
+  const callbackURL = `${baseUrl}/api/auth/discord/callback`;
   console.log('Using Discord callback URL:', callbackURL);
 
   passport.use(
@@ -74,13 +86,11 @@ export function setupAuth(app: Express) {
     )
   );
 
-  // Serialize user for the session
   passport.serializeUser((user: any, done) => {
     console.log('Serializing user:', user.username);
     done(null, user.discordId);
   });
 
-  // Deserialize user from the session
   passport.deserializeUser(async (id: string, done) => {
     try {
       console.log('Deserializing user ID:', id);
@@ -92,7 +102,7 @@ export function setupAuth(app: Express) {
     }
   });
 
-  // Auth routes with detailed logging
+  // Auth routes
   app.get('/api/auth/discord', (req, res, next) => {
     console.log('Starting Discord authentication, query params:', req.query);
     const state = req.query.state as string;
