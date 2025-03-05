@@ -20,14 +20,15 @@ app.use(express.urlencoded({ extended: true }));
   console.log('Environment:', process.env.NODE_ENV);
 
   // Set up authentication first
+  console.log('Setting up authentication...');
   setupAuth(app);
 
-  // Register API routes
+  // Register API routes before Vite middleware
   console.log('Setting up API routes...');
   const server = await registerRoutes(app);
 
   if (process.env.NODE_ENV === "development") {
-    // In development, set up Vite middleware
+    // In development, set up Vite middleware after API routes
     console.log('Setting up Vite middleware for development...');
     await setupVite(app, server);
     server.listen(5000, "0.0.0.0", () => {
@@ -38,7 +39,7 @@ app.use(express.urlencoded({ extended: true }));
     console.log('Setting up static file serving for production...');
     try {
       serveStatic(app);
-      app.listen(5000, "0.0.0.0", () => {
+      server.listen(5000, "0.0.0.0", () => {
         log("Server started in production mode on port 5000");
       });
     } catch (error) {

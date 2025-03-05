@@ -34,10 +34,7 @@ export function setupAuth(app: Express) {
   app.use(passport.session());
 
   // Set up Discord strategy
-  const callbackURL = process.env.NODE_ENV === 'production'
-    ? 'https://your-domain.repl.co/api/auth/discord/callback'  // Will be updated when deployed
-    : 'http://localhost:5000/api/auth/discord/callback';  // Exact match with Discord Developer Portal
-
+  const callbackURL = 'http://localhost:5000/api/auth/discord/callback';  // Exact match with Discord Developer Portal
   console.log('Using Discord callback URL:', callbackURL);
 
   passport.use(
@@ -92,21 +89,26 @@ export function setupAuth(app: Express) {
     }
   });
 
-  // Auth routes
+  // Auth routes with detailed logging
   app.get('/api/auth/discord', (req, res, next) => {
-    console.log('Starting Discord authentication');
+    console.log('Starting Discord authentication, query params:', req.query);
+    const state = req.query.state as string;
+    if (state) {
+      req.session.returnTo = state;
+    }
     passport.authenticate('discord')(req, res, next);
   });
 
   app.get('/api/auth/discord/callback',
     (req, res, next) => {
-      console.log('Received callback from Discord');
+      console.log('Received callback from Discord, query params:', req.query);
       passport.authenticate('discord', {
-        failureRedirect: '/'
+        failureRedirect: '/',
+        failureMessage: true
       })(req, res, next);
     },
     (req, res) => {
-      console.log('Authentication successful, redirecting to:', req.session.returnTo || '/');
+      console.log('Authentication successful, session:', req.session);
       const redirectTo = req.session.returnTo || '/';
       delete req.session.returnTo;
       res.redirect(redirectTo);
@@ -128,6 +130,12 @@ export function setupAuth(app: Express) {
       if (err) return next(err);
       res.sendStatus(200);
     });
+  });
+
+  // Add error handling middleware
+  app.use((err: any, req: any, res: any, next: any) => {
+    console.error('Auth error:', err);
+    res.status(500).json({ error: 'Authentication error', message: err.message });
   });
 
   console.log('Authentication setup complete');
