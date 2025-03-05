@@ -33,6 +33,7 @@ app.use(express.urlencoded({ extended: true }));
     res.status(500).json({ error: 'Server error', message: err.message });
   });
 
+  // Setup other middleware based on environment
   if (process.env.NODE_ENV === "development") {
     // In development, set up Vite middleware AFTER auth and API routes
     console.log('Setting up Vite middleware for development...');

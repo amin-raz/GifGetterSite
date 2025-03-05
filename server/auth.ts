@@ -102,7 +102,7 @@ export function setupAuth(app: Express) {
     }
   });
 
-  // Auth routes
+  // Register auth routes before any other middleware
   app.get('/api/auth/discord', (req, res, next) => {
     console.log('Starting Discord authentication, query params:', req.query);
     const state = req.query.state as string;
@@ -112,9 +112,12 @@ export function setupAuth(app: Express) {
     passport.authenticate('discord')(req, res, next);
   });
 
+  // Explicitly register the callback route
   app.get('/api/auth/discord/callback',
     (req, res, next) => {
       console.log('Received callback from Discord, query params:', req.query);
+      console.log('Session before auth:', req.session);
+
       passport.authenticate('discord', {
         failureRedirect: '/',
         failureMessage: true
@@ -122,6 +125,7 @@ export function setupAuth(app: Express) {
     },
     (req, res) => {
       console.log('Authentication successful, session:', req.session);
+      console.log('User after auth:', req.user);
       const redirectTo = req.session.returnTo || '/';
       delete req.session.returnTo;
       res.redirect(redirectTo);
