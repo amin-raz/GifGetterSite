@@ -58,9 +58,14 @@ export function setupAuth(app: Express) {
           const user = {
             discordId: profile.id,
             username: profile.username,
-            avatar: `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png`
+            avatar: profile.avatar ? `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png` : null
           };
-          return done(null, user);
+          const existingUser = await storage.getUser(user.discordId);
+          if (existingUser) {
+            return done(null, existingUser);
+          }
+          const newUser = await storage.createUser(user);
+          return done(null, newUser);
         } catch (error) {
           console.error('Error in Discord strategy:', error);
           return done(error as Error);

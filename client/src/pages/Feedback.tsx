@@ -9,8 +9,12 @@ import { useToast } from "@/hooks/use-toast";
 import { z } from 'zod';
 import { apiRequest } from "@/lib/queryClient";
 
+const MAX_FEEDBACK_LENGTH = 500;
+
 const feedbackSchema = z.object({
-  content: z.string().min(1, "Feedback is required"),
+  content: z.string()
+    .min(1, "Feedback is required")
+    .max(MAX_FEEDBACK_LENGTH, `Feedback must be less than ${MAX_FEEDBACK_LENGTH} characters`),
   type: z.enum(["feature", "bug", "other"]),
 });
 
@@ -47,7 +51,7 @@ export default function Feedback() {
   return (
     <div className="min-h-screen pt-24 pb-16 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto space-y-4"> {/* Reduced space-y to 4 */}
+        <div className="max-w-2xl mx-auto">
           <Card>
             <CardHeader>
               <CardTitle>Submit Feedback</CardTitle>
@@ -59,7 +63,7 @@ export default function Feedback() {
                     control={form.control}
                     name="type"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="min-h-[80px]">
                         <FormLabel>Feedback Type</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
@@ -85,7 +89,17 @@ export default function Feedback() {
                       <FormItem>
                         <FormLabel>Your Feedback</FormLabel>
                         <FormControl>
-                          <Textarea {...field} placeholder="Share your thoughts..." />
+                          <div className="relative">
+                            <Textarea 
+                              {...field} 
+                              placeholder="Share your thoughts..." 
+                              className="min-h-[100px] resize-none"
+                              maxLength={MAX_FEEDBACK_LENGTH}
+                            />
+                            <div className="absolute bottom-2 right-2 text-xs text-muted-foreground">
+                              {field.value.length}/{MAX_FEEDBACK_LENGTH}
+                            </div>
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
