@@ -1,15 +1,9 @@
-import { Pool } from 'pg';
-import { drizzle } from 'drizzle-orm/node-postgres';
-import * as schema from "@shared/schema";
+import pg from "pg";
+const { Pool } = pg;
 
-// Use individual environment variables for connection config
-const pool = new Pool({
-  user: process.env.PGUSER,
-  host: process.env.PGHOST,
-  database: process.env.PGDATABASE,
-  password: process.env.PGPASSWORD,
-  port: parseInt(process.env.PGPORT || '5432'),
-});
+// Use DATABASE_URL for connection
+const databaseConfig = { connectionString: process.env.DATABASE_URL };
+const pool = new Pool(databaseConfig);
 
 // Handle pool errors gracefully
 pool.on('error', (err) => {
@@ -18,7 +12,12 @@ pool.on('error', (err) => {
 });
 
 // Export the database connection
+import { drizzle } from 'drizzle-orm/node-postgres';
+import * as schema from "@shared/schema";
 export const db = drizzle(pool, { schema });
 
 // Also export the pool for session store
 export { pool };
+
+// Default export for direct pool usage
+export default pool;
