@@ -34,9 +34,11 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  // Set up Discord strategy
-  const baseUrl = process.env.REPL_ID 
-    ? `https://${process.env.REPL_SLUG}.${process.env.REPL_ID}.repl.co`
+  // Get the correct callback URL based on environment
+  const replId = process.env.REPL_ID;
+  const replSlug = process.env.REPL_SLUG;
+  const baseUrl = replId && replSlug 
+    ? `https://${replSlug}.${replId}.repl.co`
     : 'http://localhost:5000';
   const callbackURL = `${baseUrl}/api/auth/discord/callback`;
 
