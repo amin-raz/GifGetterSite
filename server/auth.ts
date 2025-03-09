@@ -50,11 +50,10 @@ export function setupAuth(app: Express) {
       },
       async (_accessToken, _refreshToken, profile, done) => {
         try {
-          // For now, just pass the Discord profile as the user
           const user = {
             discordId: profile.id,
             username: profile.username,
-            avatar: profile.avatar
+            avatar: `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png`
           };
           return done(null, user);
         } catch (error) {
@@ -70,10 +69,9 @@ export function setupAuth(app: Express) {
 
   passport.deserializeUser(async (id: string, done) => {
     try {
-      // For now, create a simple user object
       const user = {
         discordId: id,
-        username: id, // We'll only have the ID during deserialization
+        username: id,
         avatar: null
       };
       done(null, user);

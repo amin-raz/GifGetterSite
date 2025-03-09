@@ -4,21 +4,15 @@ import { SiDiscord } from "react-icons/si";
 import { ThemeToggle } from "./ThemeToggle";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useEffect, useState } from 'react';
-import { getDiscordLoginUrl } from "@/lib/auth";
-
-type User = {
-  username: string;
-  avatar?: string;
-};
+import { getCurrentUser, getDiscordLoginUrl } from "@/lib/auth";
+import type { User } from "@shared/schema";
 
 export function Navigation() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check authentication status on component mount
-    fetch('/api/auth/me', { credentials: 'include' })
-      .then(res => res.ok ? res.json() : null)
+    getCurrentUser()
       .then(user => {
         setUser(user);
         setLoading(false);
@@ -73,14 +67,15 @@ export function Navigation() {
               {user ? (
                 <div className="flex items-center space-x-4">
                   <Avatar>
-                    <AvatarImage 
-                      src={user.avatar} 
-                      alt={user.username} 
-                    />
-                    <AvatarFallback>
-                      {user.username?.[0] || 'U'}
-                    </AvatarFallback>
+                    {user.avatar ? (
+                      <AvatarImage src={user.avatar} alt={user.username} />
+                    ) : (
+                      <AvatarFallback>
+                        {user.username?.[0]?.toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    )}
                   </Avatar>
+                  <span className="text-sm font-medium">{user.username}</span>
                   <Button variant="outline" onClick={handleSignOut}>
                     Sign Out
                   </Button>
