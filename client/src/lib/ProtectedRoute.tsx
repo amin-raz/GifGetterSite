@@ -1,7 +1,8 @@
-import { useAuthenticator } from '@aws-amplify/ui-react';
-import { Route, useLocation } from "wouter";
+import { useLocation } from "wouter";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { getDiscordLoginUrl } from './auth';
+import { useEffect, useState } from "react";
+import { getCurrentUser } from "./auth";
+import type { User } from "@shared/schema";
 
 export function ProtectedRoute({
   path,
@@ -10,23 +11,36 @@ export function ProtectedRoute({
   path: string;
   component: () => React.JSX.Element;
 }) {
-  const { authStatus } = useAuthenticator();
-  const [location] = useLocation();
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [, setLocation] = useLocation();
 
-  if (authStatus === 'configuring' || authStatus === 'loading') {
+  useEffect(() => {
+    getCurrentUser()
+      .then(user => {
+        setUser(user);
+        setLoading(false);
+        if (!user) {
+          setLocation('/');
+        }
+      })
+      .catch(() => {
+        setLoading(false);
+        setLocation('/');
+      });
+  }, [setLocation]);
+
+  if (loading) {
     return (
-      <Route path={path}>
-        <div className="flex items-center justify-center min-h-screen">
-          <LoadingSpinner className="h-8 w-8" />
-        </div>
-      </Route>
+      <div className="flex items-center justify-center min-h-screen">
+        <LoadingSpinner className="h-8 w-8" />
+      </div>
     );
   }
 
-  if (authStatus !== 'authenticated') {
-    window.location.href = getDiscordLoginUrl(location);
+  if (!user) {
     return null;
   }
 
-  return <Route path={path} component={Component} />;
+  return <Component />;
 }

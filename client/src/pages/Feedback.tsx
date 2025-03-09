@@ -6,13 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { useLocation } from "wouter";
-import { generateClient } from 'aws-amplify/api';
-import { useAuthenticator } from '@aws-amplify/ui-react';
 import { z } from 'zod';
 import { GifUploader } from "@/components/GifUploader";
-
-const client = generateClient();
+import { apiRequest } from "@/lib/queryClient";
 
 const feedbackSchema = z.object({
   content: z.string().min(1, "Feedback is required"),
@@ -21,24 +17,8 @@ const feedbackSchema = z.object({
 
 type FeedbackForm = z.infer<typeof feedbackSchema>;
 
-// GraphQL mutation
-const createFeedback = /* GraphQL */ `
-  mutation CreateFeedback(
-    $input: CreateFeedbackInput!
-  ) {
-    createFeedback(input: $input) {
-      id
-      content
-      type
-      createdAt
-    }
-  }
-`;
-
 export default function Feedback() {
   const { toast } = useToast();
-  const [, setLocation] = useLocation();
-  const { user, authStatus } = useAuthenticator();
 
   const form = useForm<FeedbackForm>({
     resolver: zodResolver(feedbackSchema),
@@ -48,30 +28,13 @@ export default function Feedback() {
     },
   });
 
-  // Redirect to authentication if not logged in
-  if (authStatus !== 'authenticated') {
-    setLocation('/');
-    return null;
-  }
-
   const onSubmit = async (data: FeedbackForm) => {
     try {
-      await client.graphql({
-        query: createFeedback,
-        variables: {
-          input: {
-            userId: user.username,
-            content: data.content,
-            type: data.type,
-          }
-        }
-      });
-
+      await apiRequest("POST", "/api/feedback", data);
       toast({
         title: "Feedback submitted",
         description: "Thank you for your feedback!",
       });
-
       form.reset();
     } catch (error) {
       toast({
