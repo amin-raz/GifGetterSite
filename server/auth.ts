@@ -8,8 +8,6 @@ import MemoryStore from 'memorystore';
 const MemoryStoreSession = MemoryStore(session);
 
 export function setupAuth(app: Express) {
-  const baseUrl = getBaseUrl();
-
   // Trust first proxy for Replit environment
   app.set('trust proxy', 1);
 
@@ -33,11 +31,12 @@ export function setupAuth(app: Express) {
     })
   );
 
-  // Initialize Passport and restore authentication state from session
+  // Initialize Passport
   app.use(passport.initialize());
   app.use(passport.session());
 
   // Set up Discord strategy
+  const baseUrl = process.env.REPL_ID ? `https://${process.env.REPL_SLUG}.repl.co` : 'http://localhost:5000'; //Corrected Base URL determination
   const callbackURL = `${baseUrl}/api/auth/discord/callback`;
 
   passport.use(
@@ -115,20 +114,4 @@ export function setupAuth(app: Express) {
       res.sendStatus(200);
     });
   });
-
-  // Error handling middleware
-  app.use((err: any, req: any, res: any, next: any) => {
-    console.error('Auth error:', err);
-    res.status(500).json({ error: 'Authentication error', message: err.message });
-  });
-}
-
-// Helper function to get the base URL for the application
-function getBaseUrl() {
-  // Check if we're running on Replit
-  if (process.env.REPL_ID && process.env.REPL_SLUG) {
-    return 'https://cd8b2f32-42e4-4c51-bc8a-8f1cfb255c3e-00-1fk8ng1yhc5k7.janeway.replit.dev';
-  }
-  // Fallback to localhost for development
-  return 'http://localhost:5000';
 }
