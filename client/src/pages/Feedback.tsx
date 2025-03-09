@@ -63,15 +63,18 @@ export default function Feedback() {
                     control={form.control}
                     name="type"
                     render={({ field }) => (
-                      <FormItem className="min-h-[80px]">
+                      <FormItem className="min-h-[80px] w-full">
                         <FormLabel>Feedback Type</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
-                            <SelectTrigger>
+                            <SelectTrigger className="w-[200px]">
                               <SelectValue placeholder="Select type" />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent position="popper" className="w-[--radix-select-trigger-width]">
+                          <SelectContent 
+                            position="popper" 
+                            className="w-[200px]"
+                          >
                             <SelectItem value="feature">Feature Request</SelectItem>
                             <SelectItem value="bug">Bug Report</SelectItem>
                             <SelectItem value="other">Other</SelectItem>

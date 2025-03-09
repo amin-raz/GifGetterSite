@@ -9,25 +9,6 @@ A modern web application for the GifGetter Discord bot that provides an enhanced
 - Interactive Animations - Engaging user experience with smooth transitions
 - GIF Showcase Gallery - Browse converted GIFs and examples
 
-## Setup Instructions
-
-1. Install the Amplify CLI:
-```bash
-npm install -g @aws-amplify/cli
-```
-
-2. Initialize your Amplify project:
-```bash
-chmod +x scripts/init-amplify.sh
-./scripts/init-amplify.sh
-# Follow the prompts to configure your backend
-```
-
-3. Push all services:
-```bash
-amplify push
-```
-
 ## Development
 
 ```bash
@@ -37,22 +18,16 @@ npm run dev
 
 ## Backend Structure
 
-The application uses AWS Amplify to provide:
-- GraphQL API using AWS AppSync
-- Authentication through Amazon Cognito with Discord OAuth
-- S3 storage for GIF files
-- DynamoDB for data persistence
-
-### GraphQL Schema
-The main entities in our schema:
-- User: Stores Discord user information
-- Feedback: Stores user feedback and suggestions
-- GIF: Stores information about converted GIFs
+The application uses:
+- Express server for the backend
+- Discord OAuth for authentication
+- PostgreSQL for data persistence
+- Memory session store for development
 
 ### Authentication Flow
 1. User clicks "Login with Discord"
-2. Cognito handles OAuth flow with Discord
+2. Discord handles OAuth flow
 3. On success, user is redirected back with tokens
 4. Frontend receives authenticated user session
 
-Built with React, Tailwind CSS, and powered by AWS Amplify and Discord's OAuth system.
+Built with React, Tailwind CSS, and powered by Discord's OAuth system.
