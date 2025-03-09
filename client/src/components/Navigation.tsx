@@ -41,6 +41,13 @@ export function Navigation() {
     }
   };
 
+  const handleProtectedLink = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
+    if (!user) {
+      e.preventDefault();
+      window.location.href = getDiscordLoginUrl(path);
+    }
+  };
+
   return (
     <nav className="fixed top-0 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 border-b">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-16 items-center">
@@ -54,17 +61,17 @@ export function Navigation() {
         <div className="flex-1" />
 
         <div className="flex items-center space-x-4">
+          <Link href="/feedback" onClick={(e) => handleProtectedLink(e, '/feedback')}>
+            <Button variant="ghost">Feedback</Button>
+          </Link>
+          <Link href="/converter" onClick={(e) => handleProtectedLink(e, '/converter')}>
+            <Button variant="ghost">Web Converter</Button>
+          </Link>
           <ThemeToggle />
           {!loading && (
             <>
               {user ? (
                 <div className="flex items-center space-x-4">
-                  <Link href="/feedback">
-                    <Button variant="ghost">Feedback</Button>
-                  </Link>
-                  <Link href="/converter">
-                    <Button variant="ghost">Web Converter</Button>
-                  </Link>
                   <Avatar>
                     <AvatarImage 
                       src={user.avatar} 
