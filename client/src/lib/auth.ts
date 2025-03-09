@@ -3,21 +3,13 @@ import type { User } from "@shared/schema";
 
 export const DISCORD_CLIENT_ID = import.meta.env.VITE_DISCORD_CLIENT_ID;
 
-// Helper function to get the base URL for the application
-function getBaseUrl() {
-  // Check if we're running on Replit
-  if (window.location.hostname.includes('replit.dev')) {
-    return window.location.origin;
-  }
-  // Fallback to localhost for development
-  return 'http://localhost:5000';
-}
+// Use the exact callback URL that's registered in Discord Developer Portal
+const CALLBACK_URL = 'https://cd8b2f32-42e4-4c51-bc8a-8f1cfb255c3e-00-1fk8ng1yhc5k7.janeway.replit.dev/api/auth/discord/callback';
 
 export function getDiscordLoginUrl(state?: string) {
-  const baseUrl = getBaseUrl();
   const params = new URLSearchParams({
     client_id: DISCORD_CLIENT_ID,
-    redirect_uri: `${baseUrl}/api/auth/discord/callback`,
+    redirect_uri: CALLBACK_URL,
     response_type: "code",
     scope: "identify email",
     ...(state ? { state } : {})
