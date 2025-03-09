@@ -12,7 +12,7 @@ const PostgresStore = connectPg(session);
 function getBaseUrl() {
   // Check if we're running on Replit
   if (process.env.REPL_ID && process.env.REPL_SLUG) {
-    return `https://cd8b2f32-42e4-4c51-bc8a-8f1cfb255c3e-00-1fk8ng1yhc5k7.janeway.replit.dev`;
+    return 'https://cd8b2f32-42e4-4c51-bc8a-8f1cfb255c3e-00-1fk8ng1yhc5k7.janeway.replit.dev';
   }
   // Fallback to localhost for development
   return 'http://localhost:5000';
@@ -22,9 +22,9 @@ export function setupAuth(app: Express) {
   console.log('Setting up authentication...');
 
   const baseUrl = getBaseUrl();
-  console.log('Using base URL for auth:', baseUrl); // Debug log
+  console.log('Using base URL for auth:', baseUrl);
 
-  // Trust first proxy
+  // Trust first proxy for Replit environment
   app.set('trust proxy', 1);
 
   // Set up session middleware with updated cookie settings
@@ -40,9 +40,11 @@ export function setupAuth(app: Express) {
       saveUninitialized: false,
       proxy: true,
       cookie: {
-        secure: process.env.NODE_ENV === 'production',
+        secure: true,
         sameSite: 'lax',
-        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        domain: process.env.REPL_ID ? '.replit.dev' : undefined,
+        path: '/'
       }
     })
   );
@@ -96,6 +98,7 @@ export function setupAuth(app: Express) {
     try {
       console.log('Deserializing user ID:', id);
       const user = await storage.getUser(id);
+      console.log('Deserialized user:', user?.username);
       done(null, user);
     } catch (error) {
       console.error('Error deserializing user:', error);
@@ -106,6 +109,8 @@ export function setupAuth(app: Express) {
   // Register auth routes before any other middleware
   app.get('/api/auth/discord', (req, res, next) => {
     console.log('Starting Discord authentication, query params:', req.query);
+    console.log('Session at start of auth:', req.session);
+
     const state = req.query.state as string;
     if (state) {
       req.session.returnTo = state;
@@ -118,6 +123,7 @@ export function setupAuth(app: Express) {
     (req, res, next) => {
       console.log('Received callback from Discord, query params:', req.query);
       console.log('Session before auth:', req.session);
+      console.log('Headers:', req.headers);
 
       passport.authenticate('discord', {
         failureRedirect: '/',
@@ -127,6 +133,8 @@ export function setupAuth(app: Express) {
     (req, res) => {
       console.log('Authentication successful, session:', req.session);
       console.log('User after auth:', req.user);
+      console.log('Cookies:', req.cookies);
+
       const redirectTo = req.session.returnTo || '/';
       delete req.session.returnTo;
       res.redirect(redirectTo);
@@ -135,6 +143,10 @@ export function setupAuth(app: Express) {
 
   app.get('/api/auth/me', (req, res) => {
     console.log('Checking authentication status:', req.isAuthenticated());
+    console.log('Current session:', req.session);
+    console.log('Current user:', req.user);
+    console.log('Headers:', req.headers);
+
     if (req.isAuthenticated()) {
       res.json(req.user);
     } else {
