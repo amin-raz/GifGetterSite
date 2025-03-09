@@ -13,10 +13,11 @@ export function GifUploader() {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.includes('gif')) {
+    const allowedTypes = ['video/mp4', 'video/webm', 'video/quicktime'];
+    if (!allowedTypes.includes(file.type)) {
       toast({
         title: 'Invalid file type',
-        description: 'Please select a GIF file',
+        description: 'Please select a video file (MP4, WebM, or MOV)',
         variant: 'destructive',
       });
       return;
@@ -25,17 +26,16 @@ export function GifUploader() {
     setIsUploading(true);
     try {
       const result = await uploadGif(file);
-      console.log('Upload result:', result); // Debug log
-      setUploadedUrl(result.url);
+      setUploadedUrl(result);
       toast({
         title: 'Upload successful',
-        description: 'Your GIF has been uploaded successfully',
+        description: 'Your video has been uploaded and will be converted to a GIF',
       });
     } catch (error) {
-      console.error('Upload error:', error); // Debug log
+      console.error('Upload error:', error);
       toast({
         title: 'Upload failed',
-        description: error instanceof Error ? error.message : 'Failed to upload GIF. Please try again.',
+        description: error instanceof Error ? error.message : 'Failed to upload video. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -48,22 +48,22 @@ export function GifUploader() {
       <div className="flex items-center gap-4">
         <input
           type="file"
-          accept="image/gif"
+          accept="video/mp4,video/webm,video/quicktime"
           onChange={handleFileChange}
           className="hidden"
-          id="gif-upload"
+          id="video-upload"
           disabled={isUploading}
         />
-        <label htmlFor="gif-upload">
+        <label htmlFor="video-upload">
           <Button asChild variant="outline" disabled={isUploading}>
             <span className="flex items-center gap-2">
               {isUploading ? (
                 <>
                   <LoadingSpinner className="h-4 w-4" />
-                  Uploading...
+                  Converting...
                 </>
               ) : (
-                'Upload GIF'
+                'Upload Video'
               )}
             </span>
           </Button>
@@ -72,8 +72,8 @@ export function GifUploader() {
 
       {uploadedUrl && (
         <div className="mt-4">
-          <p className="text-sm text-muted-foreground mb-2">Uploaded GIF:</p>
-          <img src={uploadedUrl} alt="Uploaded GIF" className="max-w-xs rounded-lg shadow-md" />
+          <p className="text-sm text-muted-foreground mb-2">Generated GIF:</p>
+          <img src={uploadedUrl} alt="Generated GIF" className="max-w-xs rounded-lg shadow-md" />
         </div>
       )}
     </div>

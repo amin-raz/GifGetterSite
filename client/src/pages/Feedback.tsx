@@ -7,7 +7,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { z } from 'zod';
-import { GifUploader } from "@/components/GifUploader";
 import { apiRequest } from "@/lib/queryClient";
 
 const feedbackSchema = z.object({
@@ -48,16 +47,7 @@ export default function Feedback() {
   return (
     <div className="min-h-screen pt-24 pb-16 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto space-y-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>Test GIF Upload</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <GifUploader />
-            </CardContent>
-          </Card>
-
+        <div className="max-w-2xl mx-auto space-y-4"> {/* Reduced space-y to 4 */}
           <Card>
             <CardHeader>
               <CardTitle>Submit Feedback</CardTitle>
