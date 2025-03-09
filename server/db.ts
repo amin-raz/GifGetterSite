@@ -1,23 +1,15 @@
-import pg from "pg";
-const { Pool } = pg;
-
-// Use DATABASE_URL for connection
-const databaseConfig = { connectionString: process.env.DATABASE_URL };
-const pool = new Pool(databaseConfig);
-
-// Handle pool errors gracefully
-pool.on('error', (err) => {
-  console.error('Database pool error:', err);
-  // Log error but don't exit immediately to allow for recovery
-});
-
-// Export the pool for session store
-export { pool };
-
-// Export the database connection
-import { drizzle } from 'drizzle-orm/node-postgres';
+import { Pool, neonConfig } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-serverless';
+import ws from "ws";
 import * as schema from "@shared/schema";
-export const db = drizzle(pool, { schema });
 
-// Default export for direct pool usage
-export default pool;
+neonConfig.webSocketConstructor = ws;
+
+if (!process.env.DATABASE_URL) {
+  throw new Error(
+    "DATABASE_URL must be set. Did you forget to provision a database?",
+  );
+}
+
+export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+export const db = drizzle({ client: pool, schema });
