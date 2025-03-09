@@ -44,7 +44,7 @@ export function Navigation() {
 
   return (
     <nav className="fixed top-0 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 border-b">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-16 items-center">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-16 items-center pr-[calc(var(--removed-body-scroll-bar-size,0px))]">
         <Link href="/">
           <Button variant="ghost" className="flex items-center space-x-2 px-0">
             <SiDiscord className="h-6 w-6" />

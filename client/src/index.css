@@ -3,17 +3,17 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --removed-body-scroll-bar-size: 16px;
+  * {
+    @apply border-border;
   }
 
   html {
+    margin-left: calc(100vw - 100%);
+    margin-right: 0;
     overflow-y: scroll;
+    -ms-overflow-style: scrollbar;
+    -webkit-scrollbar-gutter: stable;
     scrollbar-gutter: stable;
-  }
-
-  * {
-    @apply border-border;
   }
 
   body {
