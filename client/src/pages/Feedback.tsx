@@ -71,7 +71,7 @@ export default function Feedback() {
                               <SelectValue placeholder="Select type" />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent>
+                          <SelectContent position="popper" className="w-[--radix-select-trigger-width]">
                             <SelectItem value="feature">Feature Request</SelectItem>
                             <SelectItem value="bug">Bug Report</SelectItem>
                             <SelectItem value="other">Other</SelectItem>
