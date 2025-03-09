@@ -3,6 +3,15 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --removed-body-scroll-bar-size: 16px;
+  }
+
+  html {
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+  }
+
   * {
     @apply border-border;
   }
