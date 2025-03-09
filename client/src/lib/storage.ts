@@ -1,50 +1,23 @@
-import { uploadData, getUrl, remove } from 'aws-amplify/storage';
+import type { User } from "@shared/schema";
+import { apiRequest } from "./queryClient";
 
-export interface GifUploadResult {
-  key: string;
-  url: string;
-}
-
-export async function uploadGif(file: File): Promise<GifUploadResult> {
+export async function uploadGif(file: File): Promise<string> {
   try {
-    const timestamp = new Date().getTime();
-    const key = `gifs/${timestamp}-${file.name}`;
-    
-    const result = await uploadData({
-      key,
-      data: file,
-      options: {
-        contentType: 'image/gif',
-        accessLevel: 'protected'
-      }
-    }).result;
+    const formData = new FormData();
+    formData.append('file', file);
 
-    const url = await getUrl({
-      key,
-      options: {
-        validateObjectExistence: true,
-        accessLevel: 'protected'
-      }
-    });
-
-    return {
-      key: result.key,
-      url: url.url.toString()
-    };
+    const response = await apiRequest("POST", "/api/upload", formData);
+    const data = await response.json();
+    return data.url;
   } catch (error) {
     console.error('Error uploading GIF:', error);
     throw error;
   }
 }
 
-export async function deleteGif(key: string): Promise<void> {
+export async function deleteGif(id: string): Promise<void> {
   try {
-    await remove({
-      key,
-      options: {
-        accessLevel: 'protected'
-      }
-    });
+    await apiRequest("DELETE", `/api/gifs/${id}`);
   } catch (error) {
     console.error('Error deleting GIF:', error);
     throw error;

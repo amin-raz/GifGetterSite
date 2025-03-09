@@ -22,10 +22,9 @@ export function setupAuth(app: Express) {
       saveUninitialized: false,
       proxy: true,
       cookie: {
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        domain: process.env.REPL_ID ? '.replit.dev' : undefined,
         path: '/'
       }
     })
@@ -36,7 +35,9 @@ export function setupAuth(app: Express) {
   app.use(passport.session());
 
   // Set up Discord strategy
-  const baseUrl = process.env.REPL_ID ? `https://${process.env.REPL_SLUG}.repl.co` : 'http://localhost:5000'; //Corrected Base URL determination
+  const baseUrl = process.env.REPL_ID 
+    ? `https://${process.env.REPL_SLUG}.${process.env.REPL_ID}.repl.co`
+    : 'http://localhost:5000';
   const callbackURL = `${baseUrl}/api/auth/discord/callback`;
 
   passport.use(
@@ -68,12 +69,18 @@ export function setupAuth(app: Express) {
 
   passport.deserializeUser(async (id: string, done) => {
     try {
-      const user = {
-        discordId: id,
-        username: id,
-        avatar: null
-      };
-      done(null, user);
+      const user = await storage.getUser(id);
+      if (!user) {
+        // If user not found in database, create a basic user object
+        const basicUser = {
+          discordId: id,
+          username: id,
+          avatar: null
+        };
+        done(null, basicUser);
+      } else {
+        done(null, user);
+      }
     } catch (error) {
       done(error);
     }
