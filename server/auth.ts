@@ -8,6 +8,13 @@ import MemoryStore from 'memorystore';
 const MemoryStoreSession = MemoryStore(session);
 
 export function setupAuth(app: Express) {
+  // Force development mode if not set
+  if (!process.env.NODE_ENV) {
+    process.env.NODE_ENV = 'development';
+  }
+
+  console.log('Setting up auth in environment:', process.env.NODE_ENV);
+
   // Trust first proxy for Replit environment
   app.set('trust proxy', 1);
 
@@ -22,7 +29,7 @@ export function setupAuth(app: Express) {
       saveUninitialized: false,
       proxy: true,
       cookie: {
-        secure: process.env.NODE_ENV === 'production',
+        secure: false, // Allow non-HTTPS in development
         sameSite: 'lax',
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         path: '/'
@@ -47,6 +54,7 @@ export function setupAuth(app: Express) {
       },
       async (_accessToken, _refreshToken, profile, done) => {
         try {
+          console.log('Discord auth callback received profile:', profile.username);
           const user = {
             discordId: profile.id,
             username: profile.username,
@@ -54,6 +62,7 @@ export function setupAuth(app: Express) {
           };
           return done(null, user);
         } catch (error) {
+          console.error('Error in Discord strategy:', error);
           return done(error as Error);
         }
       }
@@ -61,29 +70,43 @@ export function setupAuth(app: Express) {
   );
 
   passport.serializeUser((user: any, done) => {
+    console.log('Serializing user:', user.username);
     done(null, user.discordId);
   });
 
   passport.deserializeUser(async (id: string, done) => {
     try {
+      console.log('Deserializing user ID:', id);
       const user = await storage.getUser(id);
       if (!user) {
-        // If user not found in database, create a basic user object
         const basicUser = {
           discordId: id,
           username: id,
           avatar: null
         };
+        console.log('Created basic user:', basicUser.username);
         done(null, basicUser);
       } else {
+        console.log('Found existing user:', user.username);
         done(null, user);
       }
     } catch (error) {
+      console.error('Error deserializing user:', error);
       done(error);
     }
   });
 
   // Auth routes
+  app.get('/api/auth/me', (req, res) => {
+    console.log('GET /api/auth/me - Session:', req.session);
+    console.log('User authenticated:', req.isAuthenticated());
+    if (req.isAuthenticated()) {
+      res.json(req.user);
+    } else {
+      res.status(401).json({ error: 'Not authenticated' });
+    }
+  });
+
   app.get('/api/auth/discord', (req, res, next) => {
     const state = req.query.state as string;
     if (state) {
@@ -103,14 +126,6 @@ export function setupAuth(app: Express) {
       res.redirect(redirectTo);
     }
   );
-
-  app.get('/api/auth/me', (req, res) => {
-    if (req.isAuthenticated()) {
-      res.json(req.user);
-    } else {
-      res.status(401).json({ error: 'Not authenticated' });
-    }
-  });
 
   app.post('/api/auth/logout', (req, res, next) => {
     req.logout((err) => {

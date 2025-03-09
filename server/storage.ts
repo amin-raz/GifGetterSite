@@ -1,11 +1,9 @@
-import { db } from "./db";
 import { users, type User, type InsertUser, feedback, type Feedback, type InsertFeedback } from "@shared/schema";
-import { eq } from "drizzle-orm";
 import session from 'express-session';
-import connectPg from 'connect-pg-simple';
-import { pool } from './db';
+import MemoryStore from 'memorystore';
+import crypto from 'crypto';
 
-const PostgresStore = connectPg(session);
+const MemoryStoreSession = MemoryStore(session);
 
 export interface IStorage {
   getUser(discordId: string): Promise<User | undefined>;
@@ -15,35 +13,45 @@ export interface IStorage {
   sessionStore: session.Store;
 }
 
-export class DatabaseStorage implements IStorage {
+// Temporary in-memory storage implementation until database is properly configured
+export class MemStorage implements IStorage {
+  private users: User[] = [];
+  private feedbacks: Feedback[] = [];
   public sessionStore: session.Store;
 
   constructor() {
-    this.sessionStore = new PostgresStore({
-      pool,
-      tableName: 'sessions',
-      createTableIfMissing: true
+    this.sessionStore = new MemoryStoreSession({
+      checkPeriod: 86400000 // prune expired entries every 24h
     });
   }
 
   async getUser(discordId: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.discordId, discordId));
-    return user;
+    return this.users.find(u => u.discordId === discordId);
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const [user] = await db.insert(users).values(insertUser).returning();
+    const user: User = {
+      id: crypto.randomUUID(),
+      createdAt: new Date(),
+      ...insertUser
+    };
+    this.users.push(user);
     return user;
   }
 
   async createFeedback(insertFeedback: InsertFeedback): Promise<Feedback> {
-    const [newFeedback] = await db.insert(feedback).values(insertFeedback).returning();
-    return newFeedback;
+    const feedback: Feedback = {
+      id: crypto.randomUUID(),
+      createdAt: new Date(),
+      ...insertFeedback
+    };
+    this.feedbacks.push(feedback);
+    return feedback;
   }
 
   async getFeedback(): Promise<Feedback[]> {
-    return db.select().from(feedback);
+    return this.feedbacks;
   }
 }
 
-export const storage = new DatabaseStorage();
+export const storage = new MemStorage();
