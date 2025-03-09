@@ -21,10 +21,24 @@ app.use(express.urlencoded({ extended: true }));
   console.log('Environment:', process.env.NODE_ENV);
 
   try {
-    // Test database connection first
-    console.log('Testing database connection...');
-    await pool.query('SELECT NOW()');
-    console.log('Database connection successful');
+    // Optionally test the database connection
+    if (process.env.SKIP_DB_TEST === "true") {
+      console.log('Skipping initial database connection test');
+    } else {
+      console.log('Testing database connection...', {
+        host: process.env.PGHOST,
+        port: process.env.PGPORT,
+        database: process.env.PGDATABASE,
+        user: process.env.PGUSER
+      });
+      try {
+        await pool.query('SELECT NOW()');
+        console.log('Database connection successful');
+      } catch (dbError) {
+        console.error('Database connection test failed:', dbError);
+        // Continue server startup despite DB test failure
+      }
+    }
 
     // Set up authentication first
     console.log('Setting up authentication...');

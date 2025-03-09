@@ -11,8 +11,8 @@ const PostgresStore = connectPg(session);
 // Helper function to get the base URL for the application
 function getBaseUrl() {
   // Check if we're running on Replit
-  if (process.env.REPL_ID && process.env.REPL_SLUG) {
-    return `https://cd8b2f32-42e4-4c51-bc8a-8f1cfb255c3e-00-1fk8ng1yhc5k7.janeway.replit.dev`;
+  if (process.env.REPL_ID) {
+    return `https://${process.env.REPL_ID}-${process.env.REPL_OWNER}-${process.env.REPL_SLUG}.replit.dev`;
   }
   // Fallback to localhost for development
   return 'http://localhost:5000';
@@ -27,14 +27,25 @@ export function setupAuth(app: Express) {
   // Trust first proxy
   app.set('trust proxy', 1);
 
+  // Set up session store with fallback to memory store
+  let sessionStore;
+  try {
+    sessionStore = new PostgresStore({
+      pool,
+      tableName: 'sessions',
+      createTableIfMissing: true
+    });
+    console.log('Using PostgreSQL session store');
+  } catch (error) {
+    console.warn('Failed to initialize PostgreSQL session store:', error);
+    console.log('Falling back to memory session store');
+    sessionStore = new session.MemoryStore();
+  }
+
   // Set up session middleware with updated cookie settings
   app.use(
     session({
-      store: new PostgresStore({
-        pool,
-        tableName: 'sessions',
-        createTableIfMissing: true
-      }),
+      store: sessionStore,
       secret: process.env.SESSION_SECRET!,
       resave: false,
       saveUninitialized: false,

@@ -11,13 +11,13 @@ pool.on('error', (err) => {
   // Log error but don't exit immediately to allow for recovery
 });
 
+// Export the pool for session store
+export { pool };
+
 // Export the database connection
 import { drizzle } from 'drizzle-orm/node-postgres';
 import * as schema from "@shared/schema";
 export const db = drizzle(pool, { schema });
-
-// Also export the pool for session store
-export { pool };
 
 // Default export for direct pool usage
 export default pool;
