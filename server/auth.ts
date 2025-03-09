@@ -3,18 +3,22 @@ import { Strategy as DiscordStrategy } from 'passport-discord';
 import session from 'express-session';
 import { storage } from './storage';
 import { Express } from 'express';
-import { sql } from '@neondatabase/serverless';
+import MemoryStore from 'memorystore';
+
+const MemoryStoreSession = MemoryStore(session);
 
 export function setupAuth(app: Express) {
   const baseUrl = getBaseUrl();
-  console.log('Using base URL for auth:', baseUrl);
 
   // Trust first proxy for Replit environment
   app.set('trust proxy', 1);
 
-  // Set up session middleware with updated cookie settings
+  // Set up session middleware with MemoryStore
   app.use(
     session({
+      store: new MemoryStoreSession({
+        checkPeriod: 86400000 // prune expired entries every 24h
+      }),
       secret: process.env.SESSION_SECRET!,
       resave: false,
       saveUninitialized: false,
@@ -33,7 +37,7 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  // Set up Discord strategy with environment-aware callback URL
+  // Set up Discord strategy
   const callbackURL = `${baseUrl}/api/auth/discord/callback`;
 
   passport.use(
@@ -46,19 +50,14 @@ export function setupAuth(app: Express) {
       },
       async (_accessToken, _refreshToken, profile, done) => {
         try {
-          let user = await storage.getUser(profile.id);
-
-          if (!user) {
-            user = await storage.createUser({
-              discordId: profile.id,
-              username: profile.username,
-              avatar: profile.avatar
-            });
-          }
-
+          // For now, just pass the Discord profile as the user
+          const user = {
+            discordId: profile.id,
+            username: profile.username,
+            avatar: profile.avatar
+          };
           return done(null, user);
         } catch (error) {
-          console.error('Error in Discord strategy:', error);
           return done(error as Error);
         }
       }
@@ -71,15 +70,19 @@ export function setupAuth(app: Express) {
 
   passport.deserializeUser(async (id: string, done) => {
     try {
-      const user = await storage.getUser(id);
+      // For now, create a simple user object
+      const user = {
+        discordId: id,
+        username: id, // We'll only have the ID during deserialization
+        avatar: null
+      };
       done(null, user);
     } catch (error) {
-      console.error('Error deserializing user:', error);
       done(error);
     }
   });
 
-  // Register auth routes
+  // Auth routes
   app.get('/api/auth/discord', (req, res, next) => {
     const state = req.query.state as string;
     if (state) {
@@ -115,7 +118,7 @@ export function setupAuth(app: Express) {
     });
   });
 
-  // Add error handling middleware
+  // Error handling middleware
   app.use((err: any, req: any, res: any, next: any) => {
     console.error('Auth error:', err);
     res.status(500).json({ error: 'Authentication error', message: err.message });
