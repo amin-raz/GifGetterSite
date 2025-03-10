@@ -51,7 +51,7 @@ export function Features() {
   };
 
   return (
-    <section className="py-16 bg-muted/50">
+    <section className="relative py-16 bg-muted/50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
@@ -76,7 +76,7 @@ export function Features() {
           className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
         >
           {features.map((feature) => (
-            <motion.div key={feature.title} variants={item}>
+            <motion.div key={feature.title} variants={item} className="relative">
               <Card className="h-full">
                 <CardHeader>
                   <feature.icon className="h-10 w-10 text-foreground transition-colors" />
