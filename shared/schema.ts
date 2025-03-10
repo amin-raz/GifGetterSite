@@ -1,31 +1,35 @@
-import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
-import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
-export const users = pgTable('users', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  discordId: text('discord_id').notNull().unique(),
-  username: text('username').notNull(),
-  avatar: text('avatar'),
-  createdAt: timestamp('created_at').defaultNow(),
+// User types
+export const insertUserSchema = z.object({
+  discordId: z.string(),
+  username: z.string(),
+  avatar: z.string().nullable(),
 });
 
-// Create insert schema for users
-export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true });
+export type User = {
+  id: string;
+  discordId: string;
+  username: string;
+  avatar: string | null;
+  createdAt: Date | null;
+};
 
-// Export types
-export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 
-// Export feedback types and schema
-export const feedback = pgTable('feedback', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  userId: uuid('user_id'),
-  content: text('content').notNull(),
-  type: text('type').notNull(),
-  createdAt: timestamp('created_at').defaultNow(),
+// Feedback types
+export const insertFeedbackSchema = z.object({
+  userId: z.string(),
+  content: z.string(),
+  type: z.string(),
 });
 
-export const insertFeedbackSchema = createInsertSchema(feedback).omit({ id: true, createdAt: true });
-export type Feedback = typeof feedback.$inferSelect;
+export type Feedback = {
+  id: string;
+  userId: string | null;
+  content: string;
+  type: string;
+  createdAt: Date | null;
+};
+
 export type InsertFeedback = z.infer<typeof insertFeedbackSchema>;
