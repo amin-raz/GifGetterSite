@@ -47,8 +47,13 @@ export async function registerRoutes(app: Express) {
 
   // Feedback endpoints
   app.get("/api/feedback", async (_req, res) => {
-    const feedback = await storage.getFeedback();
-    res.json(feedback);
+    try {
+      const feedback = await storage.getFeedback();
+      res.json(feedback);
+    } catch (error) {
+      console.error('Error fetching feedback:', error);
+      res.status(500).json({ error: "Failed to fetch feedback" });
+    }
   });
 
   app.post("/api/feedback", async (req, res) => {
@@ -62,7 +67,7 @@ export async function registerRoutes(app: Express) {
     try {
       const feedbackData = insertFeedbackSchema.parse({
         ...req.body,
-        userId: req.session.userId // Add userId from session
+        userId: req.session.userId
       });
       const feedback = await storage.createFeedback(feedbackData);
       res.json(feedback);
