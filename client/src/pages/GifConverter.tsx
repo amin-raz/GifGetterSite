@@ -3,17 +3,21 @@ import { GifUploader } from "@/components/GifUploader";
 
 export default function GifConverter() {
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <div className="max-w-2xl mx-auto">
-        <Card>
-          <CardHeader>
-            <CardTitle>Convert Video to GIF</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <GifUploader />
-          </CardContent>
-        </Card>
+    <section className="py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl mx-auto">
+          <Card className="group transition-colors duration-300 hover:bg-primary/5">
+            <CardHeader>
+              <CardTitle className="transition-colors duration-300 group-hover:text-primary">
+                Convert Video to GIF
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <GifUploader />
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

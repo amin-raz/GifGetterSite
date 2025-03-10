@@ -39,9 +39,7 @@ function App() {
         <div className="min-h-screen flex flex-col">
           <Navigation />
           <main className="flex-1 mt-16">
-            <div className="max-w-7xl mx-auto">
-              <Router />
-            </div>
+            <Router />
           </main>
           <Footer />
         </div>

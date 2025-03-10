@@ -7,7 +7,7 @@ export function WebConverter() {
   const [, setLocation] = useLocation();
 
   return (
-    <section className="py-16 bg-muted/30">
+    <section className="py-16 bg-muted/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -23,8 +23,8 @@ export function WebConverter() {
           </p>
         </motion.div>
 
-        <div className="max-w-3xl mx-auto bg-card rounded-lg shadow-lg overflow-hidden">
-          <div className="p-8 flex flex-col items-center text-center">
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-card rounded-lg shadow-lg overflow-hidden p-8 flex flex-col items-center text-center">
             <div className="mb-6 p-4 rounded-full bg-primary/10">
               <Monitor className="h-8 w-8 text-primary" />
             </div>

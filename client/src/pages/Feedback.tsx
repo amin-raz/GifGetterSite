@@ -73,7 +73,7 @@ export default function Feedback() {
   };
 
   return (
-    <div className="w-full py-16 bg-background">
+    <div className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto space-y-8">
           <Card className="group transition-colors duration-300 hover:bg-primary/5">

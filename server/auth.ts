@@ -8,17 +8,12 @@ import MemoryStore from 'memorystore';
 const MemoryStoreSession = MemoryStore(session);
 
 export function setupAuth(app: Express) {
-  // Force development mode if not set
   if (!process.env.NODE_ENV) {
     process.env.NODE_ENV = 'development';
   }
 
-  console.log('Setting up auth in environment:', process.env.NODE_ENV);
-
-  // Trust first proxy for Replit environment
   app.set('trust proxy', 1);
 
-  // Set up session middleware with MemoryStore
   app.use(
     session({
       store: new MemoryStoreSession({
@@ -29,19 +24,17 @@ export function setupAuth(app: Express) {
       saveUninitialized: false,
       proxy: true,
       cookie: {
-        secure: false, // Allow non-HTTPS in development
+        secure: false,
         sameSite: 'lax',
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        maxAge: 30 * 24 * 60 * 60 * 1000,
         path: '/'
       }
     })
   );
 
-  // Initialize Passport
   app.use(passport.initialize());
   app.use(passport.session());
 
-  // Use the exact callback URL registered in Discord Developer Portal
   const callbackURL = 'https://cd8b2f32-42e4-4c51-bc8a-8f1cfb255c3e-00-1fk8ng1yhc5k7.janeway.replit.dev/api/auth/discord/callback';
 
   passport.use(
@@ -54,7 +47,6 @@ export function setupAuth(app: Express) {
       },
       async (_accessToken, _refreshToken, profile, done) => {
         try {
-          console.log('Discord auth callback received profile:', profile.username);
           const user = {
             discordId: profile.id,
             username: profile.username,
@@ -75,13 +67,11 @@ export function setupAuth(app: Express) {
   );
 
   passport.serializeUser((user: any, done) => {
-    console.log('Serializing user:', user.username);
     done(null, user.discordId);
   });
 
   passport.deserializeUser(async (id: string, done) => {
     try {
-      console.log('Deserializing user ID:', id);
       const user = await storage.getUser(id);
       if (!user) {
         const basicUser = {
@@ -89,10 +79,8 @@ export function setupAuth(app: Express) {
           username: id,
           avatar: null
         };
-        console.log('Created basic user:', basicUser.username);
         done(null, basicUser);
       } else {
-        console.log('Found existing user:', user.username);
         done(null, user);
       }
     } catch (error) {
@@ -103,8 +91,6 @@ export function setupAuth(app: Express) {
 
   // Auth routes
   app.get('/api/auth/me', (req, res) => {
-    console.log('GET /api/auth/me - Session:', req.session);
-    console.log('User authenticated:', req.isAuthenticated());
     if (req.isAuthenticated()) {
       res.json(req.user);
     } else {

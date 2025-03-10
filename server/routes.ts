@@ -18,7 +18,6 @@ export async function registerRoutes(app: Express) {
   });
 
   app.post("/api/feedback", async (req, res) => {
-    console.log('POST /api/feedback - Session:', req.session, 'Body:', req.body);
     if (!req.isAuthenticated()) {
       res.status(401).json({ error: "Must be logged in to submit feedback" });
       return;
@@ -36,7 +35,7 @@ export async function registerRoutes(app: Express) {
       const feedback = await storage.createFeedback(validatedData);
       res.json(feedback);
     } catch (error) {
-      console.error('Feedback submission error:', error);
+      console.error('Error submitting feedback:', error);
       res.status(400).json({ error: "Invalid feedback data" });
     }
   });
