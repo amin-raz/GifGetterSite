@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { z } from 'zod';
 import { apiRequest } from "@/lib/queryClient";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, queryClient } from "@tanstack/react-query";
 import type { Feedback } from "@shared/schema";
 
 const MAX_FEEDBACK_LENGTH = 500;
@@ -55,6 +55,9 @@ export default function Feedback() {
       }
       const result = await response.json();
       console.log('Feedback submission result:', result);
+
+      // Invalidate the feedback query to trigger a refresh
+      queryClient.invalidateQueries({ queryKey: ['/api/feedback'] });
 
       toast({
         title: "Feedback submitted",
@@ -164,9 +167,14 @@ export default function Feedback() {
                   {feedbackList.map((feedback) => (
                     <div key={feedback.id} className="p-4 rounded-lg border">
                       <div className="flex justify-between items-start mb-2">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                          {feedback.type}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent text-accent-foreground">
+                            {feedback.type}
+                          </span>
+                          <span className="text-sm text-muted-foreground">
+                            by {feedback.username || 'Anonymous'}
+                          </span>
+                        </div>
                         <span className="text-xs text-muted-foreground">
                           {new Date(feedback.createdAt!).toLocaleDateString()}
                         </span>

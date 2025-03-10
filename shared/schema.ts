@@ -22,6 +22,7 @@ export const insertFeedbackSchema = z.object({
   userId: z.string(),
   content: z.string(),
   type: z.string(),
+  username: z.string(), // Add username field
 });
 
 export type Feedback = {
@@ -29,6 +30,7 @@ export type Feedback = {
   userId: string | null;
   content: string;
   type: string;
+  username: string; // Add username field
   createdAt: Date | null;
 };
 
