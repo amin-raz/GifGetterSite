@@ -17,6 +17,11 @@
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply font-sans antialiased bg-gradient-to-b from-background/50 to-background text-foreground min-h-screen;
+    background-image: radial-gradient(
+      circle at center,
+      hsl(var(--background)) 0%,
+      hsl(var(--muted)) 100%
+    );
   }
 }

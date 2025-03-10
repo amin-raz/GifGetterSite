@@ -7,9 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { z } from 'zod';
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { useQuery, queryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import type { Feedback } from "@shared/schema";
 
 const MAX_FEEDBACK_LENGTH = 500;
@@ -116,9 +116,9 @@ export default function Feedback() {
                         <FormLabel>Your Feedback</FormLabel>
                         <FormControl>
                           <div className="relative">
-                            <Textarea 
-                              {...field} 
-                              placeholder="Share your thoughts..." 
+                            <Textarea
+                              {...field}
+                              placeholder="Share your thoughts..."
                               className="min-h-[100px] resize-none"
                               maxLength={MAX_FEEDBACK_LENGTH}
                             />
@@ -133,8 +133,8 @@ export default function Feedback() {
                   />
 
                   <div className="flex justify-end">
-                    <Button 
-                      type="submit" 
+                    <Button
+                      type="submit"
                       disabled={form.formState.isSubmitting}
                       className="flex items-center gap-2"
                     >
