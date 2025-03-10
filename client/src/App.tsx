@@ -38,7 +38,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <div className="min-h-screen flex flex-col">
           <Navigation />
-          <main className="flex-1 w-full max-w-[100rem] mx-auto px-4 sm:px-6 lg:px-8 pt-16">
+          <main className="flex-1">
             <Router />
           </main>
           <Footer />
