@@ -26,7 +26,6 @@ type FeedbackForm = z.infer<typeof feedbackSchema>;
 export default function Feedback() {
   const { toast } = useToast();
 
-  // Query to fetch feedback
   const { data: feedbackList, isLoading: isLoadingFeedback } = useQuery<Feedback[]>({
     queryKey: ['/api/feedback'],
     queryFn: async () => {
@@ -56,7 +55,6 @@ export default function Feedback() {
       const result = await response.json();
       console.log('Feedback submission result:', result);
 
-      // Invalidate the feedback query to trigger a refresh
       queryClient.invalidateQueries({ queryKey: ['/api/feedback'] });
 
       toast({
@@ -68,19 +66,19 @@ export default function Feedback() {
       console.error('Feedback submission error:', error);
       toast({
         title: "Error",
-        description: "Failed to submit feedback. Please try again.",
+        description: error instanceof Error ? error.message : 'Failed to submit feedback. Please try again.',
         variant: "destructive",
       });
     }
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-16 bg-background">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto space-y-8">
-          <Card>
+    <div className="w-full py-16 bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto space-y-8">
+          <Card className="group transition-colors duration-300 hover:bg-primary/5">
             <CardHeader>
-              <CardTitle>Submit Feedback</CardTitle>
+              <CardTitle className="transition-colors duration-300 group-hover:text-primary">Submit Feedback</CardTitle>
             </CardHeader>
             <CardContent>
               <Form {...form}>
@@ -119,7 +117,7 @@ export default function Feedback() {
                             <Textarea
                               {...field}
                               placeholder="Share your thoughts..."
-                              className="min-h-[100px] resize-none"
+                              className="min-h-[100px] resize-none transition-colors duration-300 focus:border-primary"
                               maxLength={MAX_FEEDBACK_LENGTH}
                             />
                             <div className="absolute bottom-2 right-2 text-xs text-muted-foreground">
@@ -136,7 +134,7 @@ export default function Feedback() {
                     <Button
                       type="submit"
                       disabled={form.formState.isSubmitting}
-                      className="flex items-center gap-2"
+                      className="group flex items-center gap-2"
                     >
                       {form.formState.isSubmitting ? (
                         <>
@@ -165,7 +163,7 @@ export default function Feedback() {
               ) : feedbackList && feedbackList.length > 0 ? (
                 <div className="space-y-4">
                   {feedbackList.map((feedback) => (
-                    <div key={feedback.id} className="p-4 rounded-lg border">
+                    <div key={feedback.id} className="p-4 rounded-lg border group transition-colors duration-300 hover:bg-primary/5">
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex items-center gap-2">
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent text-accent-foreground">
@@ -179,7 +177,9 @@ export default function Feedback() {
                           {new Date(feedback.createdAt!).toLocaleDateString()}
                         </span>
                       </div>
-                      <p className="text-sm text-muted-foreground">{feedback.content}</p>
+                      <p className="text-sm text-muted-foreground transition-colors duration-300 group-hover:text-primary/80">
+                        {feedback.content}
+                      </p>
                     </div>
                   ))}
                 </div>

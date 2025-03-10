@@ -18,7 +18,7 @@ const NotFound = lazy(() => import("@/pages/not-found"));
 function Router() {
   return (
     <Suspense fallback={
-      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
         <LoadingSpinner className="h-8 w-8" />
       </div>
     }>
@@ -34,12 +34,14 @@ function Router() {
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="light" storageKey="gifgetter-ui-theme">
+    <ThemeProvider defaultTheme="system" storageKey="gifgetter-ui-theme">
       <QueryClientProvider client={queryClient}>
         <div className="min-h-screen flex flex-col">
           <Navigation />
-          <main className="flex-1">
-            <Router />
+          <main className="flex-1 mt-16">
+            <div className="max-w-7xl mx-auto">
+              <Router />
+            </div>
           </main>
           <Footer />
         </div>
