@@ -58,16 +58,17 @@ export async function registerRoutes(app: Express) {
 
   app.post("/api/feedback", async (req, res) => {
     console.log('POST /api/feedback - Session:', req.session, 'Body:', req.body);
-    // Check if user is authenticated
-    if (!req.session?.userId) {
+    // Check if user is authenticated via passport
+    if (!req.isAuthenticated()) {
       res.status(401).json({ error: "Must be logged in to submit feedback" });
       return;
     }
 
     try {
+      const user = req.user as any; // Using passport's user object
       const feedbackData = insertFeedbackSchema.parse({
         ...req.body,
-        userId: req.session.userId
+        userId: user.discordId // Use discordId from authenticated user
       });
       const feedback = await storage.createFeedback(feedbackData);
       res.json(feedback);

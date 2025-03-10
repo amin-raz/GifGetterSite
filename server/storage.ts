@@ -1,4 +1,4 @@
-import { users, type User, type InsertUser, feedback, type Feedback, type InsertFeedback } from "@shared/schema";
+import type { User, InsertUser, Feedback, InsertFeedback } from "@shared/schema";
 import session from 'express-session';
 import MemoryStore from 'memorystore';
 import crypto from 'crypto';
@@ -13,7 +13,6 @@ export interface IStorage {
   sessionStore: session.Store;
 }
 
-// Temporary in-memory storage implementation until database is properly configured
 export class MemStorage implements IStorage {
   private users: User[] = [];
   private feedbacks: Feedback[] = [];
