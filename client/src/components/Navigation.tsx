@@ -44,7 +44,7 @@ export function Navigation() {
 
   return (
     <nav className="fixed top-0 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 border-b">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-16 items-center pr-[calc(var(--removed-body-scroll-bar-size,0px))]">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/">
           <Button variant="ghost" className="flex items-center space-x-2 px-0">
             <SiDiscord className="h-6 w-6" />
@@ -52,9 +52,7 @@ export function Navigation() {
           </Button>
         </Link>
 
-        <div className="flex-1" />
-
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center gap-4">
           <Link href="/feedback" onClick={(e) => handleProtectedLink(e, '/feedback')}>
             <Button variant="ghost">Feedback</Button>
           </Link>
@@ -65,7 +63,7 @@ export function Navigation() {
           {!loading && (
             <>
               {user ? (
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center gap-4">
                   <Avatar>
                     {user.avatar ? (
                       <AvatarImage src={user.avatar} alt={user.username} />
@@ -75,7 +73,7 @@ export function Navigation() {
                       </AvatarFallback>
                     )}
                   </Avatar>
-                  <span className="text-sm font-medium">{user.username}</span>
+                  <span className="text-sm font-medium hidden sm:inline">{user.username}</span>
                   <Button variant="outline" onClick={handleSignOut}>
                     Sign Out
                   </Button>
