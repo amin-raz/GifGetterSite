@@ -20,7 +20,7 @@ export type InsertUser = z.infer<typeof insertUserSchema>;
 // Export feedback types and schema
 export const feedback = pgTable('feedback', {
   id: uuid('id').defaultRandom().primaryKey(),
-  userId: text('user_id').references(() => users.discordId),
+  userId: uuid('user_id'),
   content: text('content').notNull(),
   type: text('type').notNull(),
   createdAt: timestamp('created_at').defaultNow(),
