@@ -51,7 +51,7 @@ export function Features() {
   };
 
   return (
-    <section className="relative py-16 bg-muted/50">
+    <section className="relative py-16 bg-muted/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
@@ -76,14 +76,19 @@ export function Features() {
           className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
         >
           {features.map((feature) => (
-            <motion.div key={feature.title} variants={item} className="relative">
-              <Card className="h-full">
+            <motion.div key={feature.title} variants={item}>
+              <Card className="group h-full overflow-hidden transition-colors duration-500 hover:bg-primary/5">
                 <CardHeader>
-                  <feature.icon className="h-10 w-10 text-foreground transition-colors" />
-                  <CardTitle className="mt-4">{feature.title}</CardTitle>
+                  <div className="relative w-10 h-10">
+                    <feature.icon className="h-10 w-10 absolute inset-0 text-muted-foreground transition-opacity duration-500 group-hover:opacity-0" />
+                    <feature.icon className="h-10 w-10 absolute inset-0 text-primary opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:rotate-12 group-hover:scale-110" />
+                  </div>
+                  <CardTitle className="mt-4 transition-colors duration-500 group-hover:text-primary">
+                    {feature.title}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground leading-relaxed line-clamp-2">
+                  <p className="text-muted-foreground leading-relaxed line-clamp-2 transition-colors duration-500 group-hover:text-primary/80">
                     {feature.description}
                   </p>
                 </CardContent>
