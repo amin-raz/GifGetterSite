@@ -9,6 +9,8 @@ import { useToast } from "@/hooks/use-toast";
 import { z } from 'zod';
 import { apiRequest } from "@/lib/queryClient";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { useQuery } from "@tanstack/react-query";
+import type { Feedback } from "@shared/schema";
 
 const MAX_FEEDBACK_LENGTH = 500;
 
@@ -24,6 +26,18 @@ type FeedbackForm = z.infer<typeof feedbackSchema>;
 export default function Feedback() {
   const { toast } = useToast();
 
+  // Query to fetch feedback
+  const { data: feedbackList, isLoading: isLoadingFeedback } = useQuery<Feedback[]>({
+    queryKey: ['/api/feedback'],
+    queryFn: async () => {
+      const response = await fetch('/api/feedback');
+      if (!response.ok) {
+        throw new Error('Failed to fetch feedback');
+      }
+      return response.json();
+    }
+  });
+
   const form = useForm<FeedbackForm>({
     resolver: zodResolver(feedbackSchema),
     defaultValues: {
@@ -34,13 +48,13 @@ export default function Feedback() {
 
   const onSubmit = async (data: FeedbackForm) => {
     try {
-      console.log('Submitting feedback:', data); // Debug log
+      console.log('Submitting feedback:', data);
       const response = await apiRequest("POST", "/api/feedback", data);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log('Feedback submission result:', result); // Debug log
+      console.log('Feedback submission result:', result);
 
       toast({
         title: "Feedback submitted",
@@ -60,7 +74,7 @@ export default function Feedback() {
   return (
     <div className="min-h-screen pt-24 pb-16 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-2xl mx-auto space-y-8">
           <Card>
             <CardHeader>
               <CardTitle>Submit Feedback</CardTitle>
@@ -133,6 +147,37 @@ export default function Feedback() {
                   </div>
                 </form>
               </Form>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Feedback</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoadingFeedback ? (
+                <div className="flex justify-center p-4">
+                  <LoadingSpinner className="h-6 w-6" />
+                </div>
+              ) : feedbackList && feedbackList.length > 0 ? (
+                <div className="space-y-4">
+                  {feedbackList.map((feedback) => (
+                    <div key={feedback.id} className="p-4 rounded-lg border">
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                          {feedback.type}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(feedback.createdAt!).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{feedback.content}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-center text-muted-foreground">No feedback submitted yet.</p>
+              )}
             </CardContent>
           </Card>
         </div>
