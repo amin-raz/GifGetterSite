@@ -1,7 +1,8 @@
 import { users, type User, type InsertUser, feedback, type Feedback, type InsertFeedback } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 import session from 'express-session';
 import MemoryStore from 'memorystore';
-import crypto from 'crypto';
 
 const MemoryStoreSession = MemoryStore(session);
 
@@ -13,10 +14,7 @@ export interface IStorage {
   sessionStore: session.Store;
 }
 
-// Temporary in-memory storage implementation until database is properly configured
-export class MemStorage implements IStorage {
-  private users: User[] = [];
-  private feedbacks: Feedback[] = [];
+export class DatabaseStorage implements IStorage {
   public sessionStore: session.Store;
 
   constructor() {
@@ -26,32 +24,23 @@ export class MemStorage implements IStorage {
   }
 
   async getUser(discordId: string): Promise<User | undefined> {
-    return this.users.find(u => u.discordId === discordId);
+    const [user] = await db.select().from(users).where(eq(users.discordId, discordId));
+    return user;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const user: User = {
-      id: crypto.randomUUID(),
-      createdAt: new Date(),
-      ...insertUser
-    };
-    this.users.push(user);
+    const [user] = await db.insert(users).values(insertUser).returning();
     return user;
   }
 
   async createFeedback(insertFeedback: InsertFeedback): Promise<Feedback> {
-    const feedback: Feedback = {
-      id: crypto.randomUUID(),
-      createdAt: new Date(),
-      ...insertFeedback
-    };
-    this.feedbacks.push(feedback);
-    return feedback;
+    const [result] = await db.insert(feedback).values(insertFeedback).returning();
+    return result;
   }
 
   async getFeedback(): Promise<Feedback[]> {
-    return this.feedbacks;
+    return await db.select().from(feedback);
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

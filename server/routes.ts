@@ -60,7 +60,10 @@ export async function registerRoutes(app: Express) {
     }
 
     try {
-      const feedbackData = insertFeedbackSchema.parse(req.body);
+      const feedbackData = insertFeedbackSchema.parse({
+        ...req.body,
+        userId: req.session.userId // Add userId from session
+      });
       const feedback = await storage.createFeedback(feedbackData);
       res.json(feedback);
     } catch (error) {
