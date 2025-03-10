@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { z } from 'zod';
 import { apiRequest } from "@/lib/queryClient";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 const MAX_FEEDBACK_LENGTH = 500;
 
@@ -33,13 +34,21 @@ export default function Feedback() {
 
   const onSubmit = async (data: FeedbackForm) => {
     try {
-      await apiRequest("POST", "/api/feedback", data);
+      console.log('Submitting feedback:', data); // Debug log
+      const response = await apiRequest("POST", "/api/feedback", data);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      console.log('Feedback submission result:', result); // Debug log
+
       toast({
         title: "Feedback submitted",
         description: "Thank you for your feedback!",
       });
       form.reset();
     } catch (error) {
+      console.error('Feedback submission error:', error);
       toast({
         title: "Error",
         description: "Failed to submit feedback. Please try again.",
@@ -51,8 +60,8 @@ export default function Feedback() {
   return (
     <div className="min-h-screen pt-24 pb-16 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto relative">
-          <Card className="overflow-visible">
+        <div className="max-w-2xl mx-auto">
+          <Card>
             <CardHeader>
               <CardTitle>Submit Feedback</CardTitle>
             </CardHeader>
@@ -63,26 +72,20 @@ export default function Feedback() {
                     control={form.control}
                     name="type"
                     render={({ field }) => (
-                      <FormItem className="min-h-[80px] w-full flex flex-col">
+                      <FormItem>
                         <FormLabel>Feedback Type</FormLabel>
-                        <div className="relative w-[200px]">
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select type" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent 
-                              position="popper"
-                              align="start"
-                              side="bottom"
-                            >
-                              <SelectItem value="feature">Feature Request</SelectItem>
-                              <SelectItem value="bug">Bug Report</SelectItem>
-                              <SelectItem value="other">Other</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select type" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="feature">Feature Request</SelectItem>
+                            <SelectItem value="bug">Bug Report</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -113,8 +116,19 @@ export default function Feedback() {
                   />
 
                   <div className="flex justify-end">
-                    <Button type="submit" disabled={form.formState.isSubmitting}>
-                      {form.formState.isSubmitting ? "Submitting..." : "Submit Feedback"}
+                    <Button 
+                      type="submit" 
+                      disabled={form.formState.isSubmitting}
+                      className="flex items-center gap-2"
+                    >
+                      {form.formState.isSubmitting ? (
+                        <>
+                          <LoadingSpinner className="h-4 w-4" />
+                          Submitting...
+                        </>
+                      ) : (
+                        'Submit Feedback'
+                      )}
                     </Button>
                   </div>
                 </form>
