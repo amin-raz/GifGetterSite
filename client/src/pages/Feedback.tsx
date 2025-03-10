@@ -51,8 +51,8 @@ export default function Feedback() {
   return (
     <div className="min-h-screen pt-24 pb-16 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto">
-          <Card>
+        <div className="max-w-2xl mx-auto relative">
+          <Card className="overflow-visible">
             <CardHeader>
               <CardTitle>Submit Feedback</CardTitle>
             </CardHeader>
