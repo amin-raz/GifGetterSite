@@ -25,4 +25,4 @@ The main entities in our schema:
 3. On success, user is redirected back with tokens
 4. Frontend receives authenticated user session
 
-Built with React, Tailwind CSS, and powered by AWS Amplify and Discord's OAuth system.
+Built with React, Tailwind CSS, and powered by AWS backend and Discord's OAuth system.
