@@ -11,7 +11,7 @@ A modern web application for the GifGetter Discord bot that provides an enhanced
 
 ## Backend Structure
 
-The application uses AWS S3 storage for video/GIF storage.
+The application uses AWS S3 for video/GIF storage.
 
 ### GraphQL Schema
 The main entities in our schema:
