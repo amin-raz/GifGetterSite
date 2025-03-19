@@ -9,7 +9,7 @@ export interface IStorage {
   getUser(discordId: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   createFeedback(feedback: InsertFeedback): Promise<Feedback>;
-  getFeedback(): Promise<Feedback[]>;
+  getFeedback(page?: number, limit?: number): Promise<{ items: Feedback[], total: number }>;
   sessionStore: session.Store;
 }
 
@@ -48,13 +48,21 @@ export class MemStorage implements IStorage {
     return feedback;
   }
 
-  async getFeedback(): Promise<Feedback[]> {
+  async getFeedback(page: number = 1, limit: number = 5): Promise<{ items: Feedback[], total: number }> {
     // Sort feedbacks by createdAt in descending order (newest first)
-    return [...this.feedbacks].sort((a, b) => {
+    const sortedFeedback = [...this.feedbacks].sort((a, b) => {
       const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
       const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
       return dateB - dateA;
     });
+
+    const start = (page - 1) * limit;
+    const end = start + limit;
+
+    return {
+      items: sortedFeedback.slice(start, end),
+      total: sortedFeedback.length
+    };
   }
 }
 

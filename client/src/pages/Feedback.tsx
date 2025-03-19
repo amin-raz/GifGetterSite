@@ -11,6 +11,8 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useQuery } from "@tanstack/react-query";
 import type { Feedback } from "@shared/schema";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useState } from "react";
 
 const MAX_FEEDBACK_LENGTH = 500;
 
@@ -37,11 +39,13 @@ function formatDateTime(date: Date | null): string {
 
 export default function Feedback() {
   const { toast } = useToast();
+  const [page, setPage] = useState(1);
+  const ITEMS_PER_PAGE = 5;
 
-  const { data: feedbackList, isLoading: isLoadingFeedback } = useQuery<Feedback[]>({
-    queryKey: ['/api/feedback'],
+  const { data: feedbackData, isLoading: isLoadingFeedback } = useQuery<{ items: Feedback[], total: number }>({
+    queryKey: ['/api/feedback', page],
     queryFn: async () => {
-      const response = await fetch('/api/feedback');
+      const response = await fetch(`/api/feedback?page=${page}&limit=${ITEMS_PER_PAGE}`);
       if (!response.ok) {
         throw new Error('Failed to fetch feedback');
       }
@@ -59,13 +63,12 @@ export default function Feedback() {
 
   const onSubmit = async (data: FeedbackForm) => {
     try {
-      console.log('Submitting feedback:', data);
       const response = await apiRequest("POST", "/api/feedback", data);
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to submit feedback');
       }
       const result = await response.json();
-      console.log('Feedback submission result:', result);
 
       queryClient.invalidateQueries({ queryKey: ['/api/feedback'] });
 
@@ -75,7 +78,6 @@ export default function Feedback() {
       });
       form.reset();
     } catch (error) {
-      console.error('Feedback submission error:', error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : 'Failed to submit feedback. Please try again.',
@@ -83,6 +85,8 @@ export default function Feedback() {
       });
     }
   };
+
+  const totalPages = feedbackData ? Math.ceil(feedbackData.total / ITEMS_PER_PAGE) : 0;
 
   return (
     <div className="py-16">
@@ -172,29 +176,57 @@ export default function Feedback() {
                 <div className="flex justify-center p-4">
                   <LoadingSpinner className="h-6 w-6" />
                 </div>
-              ) : feedbackList && feedbackList.length > 0 ? (
-                <div className="space-y-4">
-                  {feedbackList.map((feedback) => (
-                    <div key={feedback.id} className="p-4 rounded-lg border group transition-colors duration-300 hover:bg-primary/5">
-                      <div className="flex justify-between items-start mb-2">
-                        <div className="flex items-center gap-2">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent text-accent-foreground">
-                            {feedback.type}
-                          </span>
-                          <span className="text-sm text-muted-foreground">
-                            by {feedback.username || 'Anonymous'}
+              ) : feedbackData?.items && feedbackData.items.length > 0 ? (
+                <>
+                  <div className="space-y-4">
+                    {feedbackData.items.map((feedback) => (
+                      <div key={feedback.id} className="p-4 rounded-lg border group transition-colors duration-300 hover:bg-primary/5">
+                        <div className="flex justify-between items-start mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent text-accent-foreground">
+                              {feedback.type}
+                            </span>
+                            <span className="text-sm text-muted-foreground">
+                              by {feedback.username || 'Anonymous'}
+                            </span>
+                          </div>
+                          <span className="text-xs text-muted-foreground">
+                            {formatDateTime(feedback.createdAt)}
                           </span>
                         </div>
-                        <span className="text-xs text-muted-foreground">
-                          {formatDateTime(feedback.createdAt)}
-                        </span>
+                        <p className="text-sm text-muted-foreground transition-colors duration-300 group-hover:text-primary/80">
+                          {feedback.content}
+                        </p>
                       </div>
-                      <p className="text-sm text-muted-foreground transition-colors duration-300 group-hover:text-primary/80">
-                        {feedback.content}
-                      </p>
+                    ))}
+                  </div>
+
+                  {totalPages > 1 && (
+                    <div className="flex justify-center items-center gap-4 mt-6">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPage(p => Math.max(1, p - 1))}
+                        disabled={page === 1}
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                        Previous
+                      </Button>
+                      <span className="text-sm text-muted-foreground">
+                        Page {page} of {totalPages}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                        disabled={page === totalPages}
+                      >
+                        Next
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
                     </div>
-                  ))}
-                </div>
+                  )}
+                </>
               ) : (
                 <p className="text-center text-muted-foreground">No feedback submitted yet.</p>
               )}

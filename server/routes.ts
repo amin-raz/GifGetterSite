@@ -2,14 +2,19 @@ import type { Express } from "express";
 import { createServer } from "http";
 import { storage } from "./storage";
 import { insertFeedbackSchema } from "@shared/schema";
+import { Filter } from 'bad-words';
+
+const filter = new Filter();
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
 
   // Feedback endpoints
-  app.get("/api/feedback", async (_req, res) => {
+  app.get("/api/feedback", async (req, res) => {
     try {
-      const feedback = await storage.getFeedback();
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 5;
+      const feedback = await storage.getFeedback(page, limit);
       res.json(feedback);
     } catch (error) {
       console.error('Error fetching feedback:', error);
@@ -30,6 +35,12 @@ export async function registerRoutes(app: Express) {
         userId: user.discordId,
         username: user.username
       };
+
+      // Check for inappropriate content
+      if (filter.isProfane(feedbackData.content)) {
+        res.status(400).json({ error: "Feedback contains inappropriate language" });
+        return;
+      }
 
       const validatedData = insertFeedbackSchema.parse(feedbackData);
       const feedback = await storage.createFeedback(validatedData);
