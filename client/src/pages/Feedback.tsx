@@ -98,16 +98,16 @@ export default function Feedback() {
             </CardHeader>
             <CardContent>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 overflow-visible">
                   <FormField
                     control={form.control}
                     name="type"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="relative">
                         <FormLabel>Feedback Type</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
-                            <SelectTrigger>
+                            <SelectTrigger className="w-[200px]">
                               <SelectValue placeholder="Select type" />
                             </SelectTrigger>
                           </FormControl>
@@ -121,7 +121,6 @@ export default function Feedback() {
                       </FormItem>
                     )}
                   />
-
                   <FormField
                     control={form.control}
                     name="content"
@@ -145,7 +144,6 @@ export default function Feedback() {
                       </FormItem>
                     )}
                   />
-
                   <div className="flex justify-end">
                     <Button
                       type="submit"
@@ -166,7 +164,6 @@ export default function Feedback() {
               </Form>
             </CardContent>
           </Card>
-
           <Card>
             <CardHeader>
               <CardTitle>Recent Feedback</CardTitle>
@@ -200,7 +197,6 @@ export default function Feedback() {
                       </div>
                     ))}
                   </div>
-
                   {totalPages > 1 && (
                     <div className="flex justify-center items-center gap-4 mt-6">
                       <Button
