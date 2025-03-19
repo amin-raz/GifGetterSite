@@ -107,7 +107,7 @@ export default function Feedback() {
                         <FormLabel>Feedback Type</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
-                            <SelectTrigger className="w-[200px]">
+                            <SelectTrigger>
                               <SelectValue placeholder="Select type" />
                             </SelectTrigger>
                           </FormControl>
