@@ -98,29 +98,32 @@ export default function Feedback() {
             </CardHeader>
             <CardContent>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 overflow-visible">
-                  <FormField
-                    control={form.control}
-                    name="type"
-                    render={({ field }) => (
-                      <FormItem className="relative">
-                        <FormLabel>Feedback Type</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select type" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="feature">Feature Request</SelectItem>
-                            <SelectItem value="bug">Bug Report</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <div className="min-h-[80px]">
+                    <FormField
+                      control={form.control}
+                      name="type"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Feedback Type</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="feature">Feature Request</SelectItem>
+                              <SelectItem value="bug">Bug Report</SelectItem>
+                              <SelectItem value="other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
                   <FormField
                     control={form.control}
                     name="content"
@@ -144,11 +147,12 @@ export default function Feedback() {
                       </FormItem>
                     )}
                   />
+
                   <div className="flex justify-end">
                     <Button
                       type="submit"
                       disabled={form.formState.isSubmitting}
-                      className="group flex items-center gap-2"
+                      className="group"
                     >
                       {form.formState.isSubmitting ? (
                         <>
