@@ -49,7 +49,12 @@ export class MemStorage implements IStorage {
   }
 
   async getFeedback(): Promise<Feedback[]> {
-    return this.feedbacks;
+    // Sort feedbacks by createdAt in descending order (newest first)
+    return [...this.feedbacks].sort((a, b) => {
+      const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return dateB - dateA;
+    });
   }
 }
 

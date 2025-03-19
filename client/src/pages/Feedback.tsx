@@ -23,6 +23,17 @@ const feedbackSchema = z.object({
 
 type FeedbackForm = z.infer<typeof feedbackSchema>;
 
+function formatDateTime(date: Date | null): string {
+  if (!date) return 'Unknown';
+  return new Date(date).toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
 export default function Feedback() {
   const { toast } = useToast();
 
@@ -174,7 +185,7 @@ export default function Feedback() {
                           </span>
                         </div>
                         <span className="text-xs text-muted-foreground">
-                          {new Date(feedback.createdAt!).toLocaleDateString()}
+                          {formatDateTime(feedback.createdAt)}
                         </span>
                       </div>
                       <p className="text-sm text-muted-foreground transition-colors duration-300 group-hover:text-primary/80">
