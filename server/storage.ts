@@ -10,13 +10,16 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   createFeedback(feedback: InsertFeedback): Promise<Feedback>;
   getFeedback(page?: number, limit?: number): Promise<{ items: Feedback[], total: number }>;
+  canUserSubmitFeedback(userId: string): Promise<{ canSubmit: boolean, timeToWait?: number }>;
   sessionStore: session.Store;
 }
 
 export class MemStorage implements IStorage {
   private users: User[] = [];
   private feedbacks: Feedback[] = [];
+  private lastSubmissionTime: Map<string, number> = new Map();
   public sessionStore: session.Store;
+  private readonly COOLDOWN_PERIOD = 60000; // 1 minute in milliseconds
 
   constructor() {
     this.sessionStore = new MemoryStoreSession({
@@ -38,6 +41,19 @@ export class MemStorage implements IStorage {
     return user;
   }
 
+  async canUserSubmitFeedback(userId: string): Promise<{ canSubmit: boolean, timeToWait?: number }> {
+    const lastSubmission = this.lastSubmissionTime.get(userId) || 0;
+    const now = Date.now();
+    const timeSinceLastSubmission = now - lastSubmission;
+
+    if (timeSinceLastSubmission < this.COOLDOWN_PERIOD) {
+      const timeToWait = this.COOLDOWN_PERIOD - timeSinceLastSubmission;
+      return { canSubmit: false, timeToWait };
+    }
+
+    return { canSubmit: true };
+  }
+
   async createFeedback(insertFeedback: InsertFeedback): Promise<Feedback> {
     const feedback: Feedback = {
       id: crypto.randomUUID(),
@@ -45,6 +61,7 @@ export class MemStorage implements IStorage {
       ...insertFeedback
     };
     this.feedbacks.push(feedback);
+    this.lastSubmissionTime.set(insertFeedback.userId, Date.now());
     return feedback;
   }
 

@@ -30,6 +30,17 @@ export async function registerRoutes(app: Express) {
 
     try {
       const user = req.user as any;
+
+      // Check for spam
+      const { canSubmit, timeToWait } = await storage.canUserSubmitFeedback(user.discordId);
+      if (!canSubmit) {
+        const secondsToWait = Math.ceil(timeToWait! / 1000);
+        res.status(429).json({ 
+          error: `Please wait ${secondsToWait} seconds before submitting another feedback` 
+        });
+        return;
+      }
+
       const feedbackData = {
         ...req.body,
         userId: user.discordId,
