@@ -47,7 +47,7 @@ export function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link href="/">
-            <Button variant="ghost" className="flex items-center space-x-2 px-0">
+            <Button variant="ghost" className="flex items-center space-x-2 px-2">
               <SiDiscord className="h-6 w-6" />
               <span className="font-bold text-xl">GifGetter</span>
             </Button>
