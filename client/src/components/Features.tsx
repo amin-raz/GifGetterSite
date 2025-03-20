@@ -44,7 +44,7 @@ export function Features() {
       opacity: 1, 
       y: 0,
       transition: {
-        duration: 0.3,
+        duration: 0.5,
         ease: "easeOut"
       }
     }
@@ -77,18 +77,18 @@ export function Features() {
         >
           {features.map((feature) => (
             <motion.div key={feature.title} variants={item}>
-              <Card className="group h-full overflow-hidden transition-colors duration-500 hover:bg-primary/5">
+              <Card className="group h-full overflow-hidden transition-all duration-300 hover:bg-primary/5">
                 <CardHeader>
                   <div className="relative w-10 h-10">
-                    <feature.icon className="h-10 w-10 absolute inset-0 text-muted-foreground transition-opacity duration-500 group-hover:opacity-0" />
-                    <feature.icon className="h-10 w-10 absolute inset-0 text-primary opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:rotate-12 group-hover:scale-110" />
+                    <feature.icon className="h-10 w-10 absolute inset-0 text-muted-foreground transition-all duration-300 group-hover:opacity-0" />
+                    <feature.icon className="h-10 w-10 absolute inset-0 text-primary opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:rotate-6 group-hover:scale-105" />
                   </div>
-                  <CardTitle className="mt-4 transition-colors duration-500 group-hover:text-primary">
+                  <CardTitle className="mt-4 transition-colors duration-300 group-hover:text-primary/90">
                     {feature.title}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground leading-relaxed line-clamp-2 transition-colors duration-500 group-hover:text-primary/80">
+                  <p className="text-muted-foreground leading-relaxed line-clamp-2 transition-colors duration-300 group-hover:text-foreground/80">
                     {feature.description}
                   </p>
                 </CardContent>
