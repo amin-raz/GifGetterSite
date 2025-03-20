@@ -53,10 +53,9 @@
   }
 
   html {
-    margin-left: calc(100vw - 100%);
-    margin-right: 0;
     overflow-y: scroll;
-    -ms-overflow-style: scrollbar;
+    margin-right: 0;
+    padding-left: calc(100vw - 100%);
     scrollbar-gutter: stable;
   }
 
@@ -67,7 +66,5 @@
       hsl(var(--background)) 0%,
       color-mix(in hsl, hsl(var(--muted)) 10%, hsl(var(--background))) 100%
     );
-    overflow-y: auto;
-    scrollbar-gutter: stable;
   }
 }
