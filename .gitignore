@@ -30,8 +30,5 @@ yarn-error.log*
 vite.config.ts.*
 *.tar.gz
 
-# Generated files
-generated-icon.png
-
 # Testing
 coverage
