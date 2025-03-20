@@ -51,7 +51,7 @@ export function Features() {
   };
 
   return (
-    <section className="relative py-16 bg-muted/5">
+    <section className="py-12 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
@@ -77,18 +77,18 @@ export function Features() {
         >
           {features.map((feature) => (
             <motion.div key={feature.title} variants={item}>
-              <Card className="group h-full overflow-hidden transition-all duration-300 hover:bg-primary/5">
+              <Card className="group h-full overflow-hidden transition-all duration-300 hover:bg-muted">
                 <CardHeader>
                   <div className="relative w-10 h-10">
                     <feature.icon className="h-10 w-10 absolute inset-0 text-muted-foreground transition-all duration-300 group-hover:opacity-0" />
-                    <feature.icon className="h-10 w-10 absolute inset-0 text-primary opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:rotate-6 group-hover:scale-105" />
+                    <feature.icon className="h-10 w-10 absolute inset-0 text-primary/80 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:rotate-3 group-hover:scale-105" />
                   </div>
-                  <CardTitle className="mt-4 transition-colors duration-300 group-hover:text-primary/90">
+                  <CardTitle className="mt-4 transition-colors duration-300 group-hover:text-primary/70">
                     {feature.title}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground leading-relaxed line-clamp-2 transition-colors duration-300 group-hover:text-foreground/80">
+                  <p className="text-muted-foreground leading-relaxed line-clamp-2 transition-colors duration-300 group-hover:text-foreground/90">
                     {feature.description}
                   </p>
                 </CardContent>

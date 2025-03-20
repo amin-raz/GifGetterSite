@@ -26,10 +26,10 @@ export default function Home() {
   };
 
   return (
-    <div className="w-full space-y-16">
+    <div className="w-full space-y-12">
       <HeroSection />
 
-      <section className="py-16">
+      <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid gap-12 lg:grid-cols-2 items-center">
             <motion.div
@@ -60,7 +60,7 @@ export default function Home() {
 
       <Features />
 
-      <section className="py-16 bg-muted/5">
+      <section className="py-12 bg-muted/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid gap-12 lg:grid-cols-2 items-center">
             <motion.div
