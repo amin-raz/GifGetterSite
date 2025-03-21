@@ -3,23 +3,22 @@ import { Strategy as DiscordStrategy } from 'passport-discord';
 import session from 'express-session';
 import { storage } from './storage';
 import { Express } from 'express';
-import MemoryStore from 'memorystore';
-
-const MemoryStoreSession = MemoryStore(session);
 
 export function setupAuth(app: Express) {
   if (!process.env.NODE_ENV) {
     process.env.NODE_ENV = 'development';
   }
 
+  if (!process.env.SESSION_SECRET) {
+    throw new Error('SESSION_SECRET environment variable is required');
+  }
+
   app.set('trust proxy', 1);
 
   app.use(
     session({
-      store: new MemoryStoreSession({
-        checkPeriod: 86400000 // prune expired entries every 24h
-      }),
-      secret: process.env.SESSION_SECRET!,
+      store: storage.sessionStore,
+      secret: process.env.SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
       proxy: true,
@@ -37,7 +36,7 @@ export function setupAuth(app: Express) {
 
   const callbackURL = process.env.NODE_ENV === 'production'
     ? 'https://gifgetter.replit.app/api/auth/discord/callback'
-    : 'http://localhost:5000/api/auth/discord/callback';
+    : `http://localhost:5000/api/auth/discord/callback`;
 
   passport.use(
     new DiscordStrategy(
@@ -54,10 +53,12 @@ export function setupAuth(app: Express) {
             username: profile.username,
             avatar: profile.avatar ? `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png` : null
           };
+
           const existingUser = await storage.getUser(user.discordId);
           if (existingUser) {
             return done(null, existingUser);
           }
+
           const newUser = await storage.createUser(user);
           return done(null, newUser);
         } catch (error) {
@@ -96,6 +97,7 @@ export function setupAuth(app: Express) {
     if (state) {
       req.session.returnTo = state;
     }
+
     passport.authenticate('discord', {
       failureRedirect: '/',
       failureMessage: true
