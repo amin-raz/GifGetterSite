@@ -1,5 +1,4 @@
 import { HeroSection } from "@/components/HeroSection";
-import { Features } from "@/components/Features";
 import { HowItWorks } from "@/components/HowItWorks";
 import { WebConverter } from "@/components/WebConverter";
 import { WhyChoose } from "@/components/WhyChoose";
@@ -58,8 +57,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <Features />
 
       <section className="py-12 bg-muted/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
