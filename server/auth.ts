@@ -3,9 +3,6 @@ import { Strategy as DiscordStrategy } from 'passport-discord';
 import session from 'express-session';
 import { storage } from './storage';
 import { Express } from 'express';
-import MemoryStore from 'memorystore';
-
-const MemoryStoreSession = MemoryStore(session);
 
 export function setupAuth(app: Express) {
   if (!process.env.NODE_ENV) {
@@ -14,14 +11,10 @@ export function setupAuth(app: Express) {
 
   app.set('trust proxy', 1);
 
-  // Use a stable session store
-  const sessionStore = new MemoryStoreSession({
-    checkPeriod: 86400000 // prune expired entries every 24h
-  });
-
+  // Use the storage's session store for consistent session handling
   app.use(
     session({
-      store: sessionStore,
+      store: storage.sessionStore,
       secret: process.env.SESSION_SECRET!,
       resave: false,
       saveUninitialized: false,
@@ -38,12 +31,20 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
+  // Configure Discord Strategy with absolute callback URL
+  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+  const host = process.env.NODE_ENV === 'production' ? 
+    'gifgetter.replit.app' : 
+    'localhost:5000';
+
+  const callbackURL = `${protocol}://${host}/api/auth/discord/callback`;
+
   passport.use(
     new DiscordStrategy(
       {
         clientID: process.env.VITE_DISCORD_CLIENT_ID!,
         clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-        callbackURL: '/api/auth/discord/callback',
+        callbackURL,
         scope: ['identify'],
         passReqToCallback: true
       },
@@ -77,17 +78,14 @@ export function setupAuth(app: Express) {
   passport.deserializeUser(async (id: string, done) => {
     try {
       const user = await storage.getUser(id);
-      if (!user) {
-        return done(null, null);
-      }
-      done(null, user);
+      done(null, user || null);
     } catch (error) {
       console.error('Error deserializing user:', error);
       done(error);
     }
   });
 
-  // Auth routes
+  // Auth routes with better error handling
   app.get('/api/auth/me', (req, res) => {
     if (req.isAuthenticated()) {
       res.json(req.user);
@@ -101,6 +99,7 @@ export function setupAuth(app: Express) {
     if (state) {
       req.session.returnTo = state;
     }
+
     passport.authenticate('discord', {
       failureRedirect: '/',
       failureMessage: true
