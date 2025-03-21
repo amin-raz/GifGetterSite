@@ -35,12 +35,7 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  // Get the current hostname for the callback URL
-  const hostname = process.env.NODE_ENV === 'production'
-    ? 'https://gifgetter.replit.app'  // Update this with your production domain
-    : 'http://localhost:5000';
-
-  const callbackURL = `${hostname}/api/auth/discord/callback`;
+  const callbackURL = 'https://cd8b2f32-42e4-4c51-bc8a-8f1cfb255c3e-00-1fk8ng1yhc5k7.janeway.replit.dev/api/auth/discord/callback';
 
   passport.use(
     new DiscordStrategy(
@@ -57,7 +52,6 @@ export function setupAuth(app: Express) {
             username: profile.username,
             avatar: profile.avatar ? `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png` : null
           };
-
           let existingUser = await storage.getUser(user.discordId);
 
           if (existingUser) {
