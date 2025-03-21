@@ -6,7 +6,7 @@ export const DISCORD_CLIENT_ID = import.meta.env.VITE_DISCORD_CLIENT_ID;
 export function getDiscordLoginUrl(state?: string) {
   const params = new URLSearchParams({
     client_id: DISCORD_CLIENT_ID,
-    redirect_uri: '/api/auth/discord/callback',
+    redirect_uri: window.location.origin + '/api/auth/discord/callback',
     response_type: "code",
     scope: "identify",
     ...(state ? { state } : {})

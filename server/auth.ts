@@ -31,13 +31,10 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  // Configure Discord Strategy with absolute callback URL
-  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-  const host = process.env.NODE_ENV === 'production' ? 
-    'gifgetter.replit.app' : 
-    'localhost:5000';
-
-  const callbackURL = `${protocol}://${host}/api/auth/discord/callback`;
+  // Configure Discord Strategy with Replit domain
+  const callbackURL = process.env.NODE_ENV === 'production'
+    ? 'https://gifgetter.replit.app/api/auth/discord/callback'
+    : 'https://' + process.env.REPL_SLUG + '.' + process.env.REPL_OWNER + '.repl.co/api/auth/discord/callback';
 
   passport.use(
     new DiscordStrategy(
