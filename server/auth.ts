@@ -14,19 +14,22 @@ export function setupAuth(app: Express) {
 
   app.set('trust proxy', 1);
 
+  // Use a stable session store
+  const sessionStore = new MemoryStoreSession({
+    checkPeriod: 86400000 // prune expired entries every 24h
+  });
+
   app.use(
     session({
-      store: new MemoryStoreSession({
-        checkPeriod: 86400000 // prune expired entries every 24h
-      }),
+      store: sessionStore,
       secret: process.env.SESSION_SECRET!,
       resave: false,
       saveUninitialized: false,
       proxy: true,
       cookie: {
-        secure: false,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 30 * 24 * 60 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         path: '/'
       }
     })
@@ -35,16 +38,19 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  const callbackURL = process.env.NODE_ENV === 'production'
-    ? 'https://gifgetter.replit.app/api/auth/discord/callback'
-    : `http://localhost:5000/api/auth/discord/callback`;
+  // Get host from request to handle both development and production
+  const getCallbackUrl = (req: any) => {
+    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+    const host = req.get('host');
+    return `${protocol}://${host}/api/auth/discord/callback`;
+  };
 
   passport.use(
     new DiscordStrategy(
       {
         clientID: process.env.VITE_DISCORD_CLIENT_ID!,
         clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-        callbackURL,
+        callbackURL: getCallbackUrl,
         scope: ['identify']
       },
       async (_accessToken, _refreshToken, profile, done) => {
@@ -78,15 +84,9 @@ export function setupAuth(app: Express) {
     try {
       const user = await storage.getUser(id);
       if (!user) {
-        const basicUser = {
-          discordId: id,
-          username: id,
-          avatar: null
-        };
-        done(null, basicUser);
-      } else {
-        done(null, user);
+        return done(null, null);
       }
+      done(null, user);
     } catch (error) {
       console.error('Error deserializing user:', error);
       done(error);
@@ -107,7 +107,10 @@ export function setupAuth(app: Express) {
     if (state) {
       req.session.returnTo = state;
     }
-    passport.authenticate('discord')(req, res, next);
+    passport.authenticate('discord', {
+      failureRedirect: '/',
+      failureMessage: true
+    })(req, res, next);
   });
 
   app.get('/api/auth/discord/callback',
