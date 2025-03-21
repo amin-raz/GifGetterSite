@@ -24,7 +24,7 @@ export function setupAuth(app: Express) {
       saveUninitialized: false,
       proxy: true,
       cookie: {
-        secure: false,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: 30 * 24 * 60 * 60 * 1000,
         path: '/'
@@ -35,7 +35,12 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  const callbackURL = 'https://cd8b2f32-42e4-4c51-bc8a-8f1cfb255c3e-00-1fk8ng1yhc5k7.janeway.replit.dev/api/auth/discord/callback';
+  // Get the current hostname for the callback URL
+  const hostname = process.env.NODE_ENV === 'production'
+    ? 'https://gifgetter.replit.app'  // Update this with your production domain
+    : 'http://localhost:5000';
+
+  const callbackURL = `${hostname}/api/auth/discord/callback`;
 
   passport.use(
     new DiscordStrategy(
@@ -52,10 +57,19 @@ export function setupAuth(app: Express) {
             username: profile.username,
             avatar: profile.avatar ? `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png` : null
           };
-          const existingUser = await storage.getUser(user.discordId);
+
+          let existingUser = await storage.getUser(user.discordId);
+
           if (existingUser) {
+            // Update existing user in case their username or avatar changed
+            existingUser = {
+              ...existingUser,
+              username: user.username,
+              avatar: user.avatar
+            };
             return done(null, existingUser);
           }
+
           const newUser = await storage.createUser(user);
           return done(null, newUser);
         } catch (error) {
@@ -73,16 +87,7 @@ export function setupAuth(app: Express) {
   passport.deserializeUser(async (id: string, done) => {
     try {
       const user = await storage.getUser(id);
-      if (!user) {
-        const basicUser = {
-          discordId: id,
-          username: id,
-          avatar: null
-        };
-        done(null, basicUser);
-      } else {
-        done(null, user);
-      }
+      done(null, user || null);
     } catch (error) {
       console.error('Error deserializing user:', error);
       done(error);
@@ -98,7 +103,19 @@ export function setupAuth(app: Express) {
     }
   });
 
+  let lastAuthAttempt = 0;
+  const AUTH_COOLDOWN = 2000; // 2 seconds between auth attempts
+
   app.get('/api/auth/discord', (req, res, next) => {
+    const now = Date.now();
+    if (now - lastAuthAttempt < AUTH_COOLDOWN) {
+      res.status(429).json({
+        error: 'Too many auth attempts. Please wait a moment before trying again.'
+      });
+      return;
+    }
+    lastAuthAttempt = now;
+
     const state = req.query.state as string;
     if (state) {
       req.session.returnTo = state;
@@ -107,10 +124,12 @@ export function setupAuth(app: Express) {
   });
 
   app.get('/api/auth/discord/callback',
-    passport.authenticate('discord', {
-      failureRedirect: '/',
-      failureMessage: true
-    }),
+    (req, res, next) => {
+      passport.authenticate('discord', {
+        failureRedirect: '/',
+        failureMessage: true
+      })(req, res, next);
+    },
     (req, res) => {
       const redirectTo = req.session.returnTo || '/';
       delete req.session.returnTo;
@@ -123,5 +142,17 @@ export function setupAuth(app: Express) {
       if (err) return next(err);
       res.sendStatus(200);
     });
+  });
+
+  // Error handling middleware
+  app.use((err: any, req: any, res: any, next: any) => {
+    console.error('Auth error:', err);
+    if (err.name === 'InternalOAuthError') {
+      res.status(500).json({
+        error: 'Failed to authenticate with Discord. Please try again later.'
+      });
+    } else {
+      next(err);
+    }
   });
 }
