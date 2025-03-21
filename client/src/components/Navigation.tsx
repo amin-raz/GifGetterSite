@@ -38,7 +38,8 @@ export function Navigation() {
   const handleProtectedLink = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
     if (!user) {
       e.preventDefault();
-      window.location.href = getDiscordLoginUrl(path);
+      const loginUrl = getDiscordLoginUrl(path);
+      window.location.href = loginUrl;
     }
   };
 
