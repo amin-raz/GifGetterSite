@@ -38,19 +38,12 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  // Get host from request to handle both development and production
-  const getCallbackUrl = (req: any) => {
-    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-    const host = req.get('host');
-    return `${protocol}://${host}/api/auth/discord/callback`;
-  };
-
   passport.use(
     new DiscordStrategy(
       {
         clientID: process.env.VITE_DISCORD_CLIENT_ID!,
         clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-        callbackURL: getCallbackUrl,
+        callbackURL: '/api/auth/discord/callback',
         scope: ['identify']
       },
       async (_accessToken, _refreshToken, profile, done) => {
