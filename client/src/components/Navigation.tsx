@@ -4,7 +4,7 @@ import { SiDiscord } from "react-icons/si";
 import { ThemeToggle } from "./ThemeToggle";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useEffect, useState } from 'react';
-import { getCurrentUser, getDiscordLoginUrl } from "@/lib/auth";
+import { getCurrentUser, getDiscordLoginUrl, logout } from "@/lib/auth";
 import type { User } from "@shared/schema";
 
 export function Navigation() {
@@ -24,22 +24,10 @@ export function Navigation() {
 
   const handleSignOut = async () => {
     try {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include'
-      });
+      await logout();
       setUser(null);
-      window.location.href = '/';
     } catch (error) {
       console.error('Error signing out:', error);
-    }
-  };
-
-  const handleProtectedLink = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
-    if (!user) {
-      e.preventDefault();
-      const loginUrl = getDiscordLoginUrl(path);
-      window.location.href = loginUrl;
     }
   };
 
@@ -55,12 +43,31 @@ export function Navigation() {
           </Link>
 
           <div className="flex items-center gap-4">
-            <Link href="/feedback" onClick={(e) => handleProtectedLink(e, '/feedback')}>
-              <Button variant="ghost">Feedback</Button>
-            </Link>
-            <Link href="/converter" onClick={(e) => handleProtectedLink(e, '/converter')}>
-              <Button variant="ghost">Web Converter</Button>
-            </Link>
+            {user ? (
+              <>
+                <Link href="/feedback">
+                  <Button variant="ghost">Feedback</Button>
+                </Link>
+                <Link href="/converter">
+                  <Button variant="ghost">Web Converter</Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Button 
+                  variant="ghost" 
+                  onClick={() => window.location.href = getDiscordLoginUrl('/feedback')}
+                >
+                  Feedback
+                </Button>
+                <Button 
+                  variant="ghost"
+                  onClick={() => window.location.href = getDiscordLoginUrl('/converter')}
+                >
+                  Web Converter
+                </Button>
+              </>
+            )}
             <ThemeToggle />
             {!loading && (
               <>
