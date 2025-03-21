@@ -44,9 +44,10 @@ export function setupAuth(app: Express) {
         clientID: process.env.VITE_DISCORD_CLIENT_ID!,
         clientSecret: process.env.DISCORD_CLIENT_SECRET!,
         callbackURL: '/api/auth/discord/callback',
-        scope: ['identify']
+        scope: ['identify'],
+        passReqToCallback: true
       },
-      async (_accessToken, _refreshToken, profile, done) => {
+      async (req, accessToken, refreshToken, profile, done) => {
         try {
           const user = {
             discordId: profile.id,

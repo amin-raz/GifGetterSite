@@ -1,7 +1,7 @@
 import { useLocation } from "wouter";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useEffect, useState } from "react";
-import { getCurrentUser } from "./auth";
+import { getCurrentUser, getDiscordLoginUrl } from "./auth";
 import type { User } from "@shared/schema";
 
 export function ProtectedRoute({
@@ -13,27 +13,47 @@ export function ProtectedRoute({
 }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [, setLocation] = useLocation();
 
   useEffect(() => {
-    getCurrentUser()
-      .then(user => {
-        setUser(user);
-        setLoading(false);
-        if (!user) {
-          setLocation('/');
+    const checkAuth = async () => {
+      try {
+        const currentUser = await getCurrentUser();
+        setUser(currentUser);
+        if (!currentUser) {
+          // Redirect to Discord login with return path
+          window.location.href = getDiscordLoginUrl(path);
         }
-      })
-      .catch(() => {
+      } catch (error) {
+        console.error('Auth error:', error);
+        setError(error instanceof Error ? error.message : 'Authentication failed');
+      } finally {
         setLoading(false);
-        setLocation('/');
-      });
-  }, [setLocation]);
+      }
+    };
+
+    checkAuth();
+  }, [path, setLocation]);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
         <LoadingSpinner className="h-8 w-8" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] text-center">
+        <p className="text-destructive mb-4">{error}</p>
+        <button
+          onClick={() => window.location.href = getDiscordLoginUrl(path)}
+          className="text-primary hover:underline"
+        >
+          Try logging in again
+        </button>
       </div>
     );
   }
