@@ -28,6 +28,7 @@ export default function Home() {
   return (
     <div className="w-full space-y-12">
       <HeroSection />
+      <HowItWorks />
 
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -92,7 +93,6 @@ export default function Home() {
       </section>
 
       <WebConverter />
-      <HowItWorks />
       <WhyChoose />
       <BottomCTA />
     </div>
