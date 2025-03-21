@@ -24,9 +24,9 @@ export function setupAuth(app: Express) {
       saveUninitialized: false,
       proxy: true,
       cookie: {
-        secure: false,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 30 * 24 * 60 * 60 * 1000,
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         path: '/'
       }
     })
@@ -35,7 +35,9 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  const callbackURL = 'https://cd8b2f32-42e4-4c51-bc8a-8f1cfb255c3e-00-1fk8ng1yhc5k7.janeway.replit.dev/api/auth/discord/callback';
+  const callbackURL = process.env.NODE_ENV === 'production'
+    ? 'https://gifgetter.replit.app/api/auth/discord/callback'
+    : 'http://localhost:5000/api/auth/discord/callback';
 
   passport.use(
     new DiscordStrategy(
@@ -43,7 +45,7 @@ export function setupAuth(app: Express) {
         clientID: process.env.VITE_DISCORD_CLIENT_ID!,
         clientSecret: process.env.DISCORD_CLIENT_SECRET!,
         callbackURL,
-        scope: ['identify', 'email']
+        scope: ['identify']
       },
       async (_accessToken, _refreshToken, profile, done) => {
         try {
@@ -73,16 +75,7 @@ export function setupAuth(app: Express) {
   passport.deserializeUser(async (id: string, done) => {
     try {
       const user = await storage.getUser(id);
-      if (!user) {
-        const basicUser = {
-          discordId: id,
-          username: id,
-          avatar: null
-        };
-        done(null, basicUser);
-      } else {
-        done(null, user);
-      }
+      done(null, user || null);
     } catch (error) {
       console.error('Error deserializing user:', error);
       done(error);
@@ -103,7 +96,10 @@ export function setupAuth(app: Express) {
     if (state) {
       req.session.returnTo = state;
     }
-    passport.authenticate('discord')(req, res, next);
+    passport.authenticate('discord', {
+      failureRedirect: '/',
+      failureMessage: true
+    })(req, res, next);
   });
 
   app.get('/api/auth/discord/callback',

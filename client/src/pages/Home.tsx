@@ -28,6 +28,7 @@ export default function Home() {
   return (
     <div className="w-full space-y-12">
       <HeroSection />
+      <Features />
 
       {/* Section 1: Create Perfect GIFs */}
       <section className="py-12">
@@ -58,8 +59,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <Features />
 
       {/* Section 2: Share Instantly */}
       <section className="py-12 bg-muted/5">
@@ -148,36 +147,6 @@ export default function Home() {
               viewport={{ once: true }}
               variants={fadeUpVariant}
               className="lg:order-1"
-            >
-              <PlaceholderImage />
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Section 5: Why Choose */}
-      <section className="py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-12 lg:grid-cols-2 items-center">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUpVariant}
-            >
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl mb-4">
-                Why Choose GifGetter?
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                From seamless Discord integration to powerful conversion options,
-                GifGetter is the ultimate tool for creating and sharing GIFs in your community.
-              </p>
-            </motion.div>
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUpVariant}
             >
               <PlaceholderImage />
             </motion.div>
