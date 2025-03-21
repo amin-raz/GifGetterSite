@@ -3,29 +3,30 @@ import { Strategy as DiscordStrategy } from 'passport-discord';
 import session from 'express-session';
 import { storage } from './storage';
 import { Express } from 'express';
+import MemoryStore from 'memorystore';
+
+const MemoryStoreSession = MemoryStore(session);
 
 export function setupAuth(app: Express) {
   if (!process.env.NODE_ENV) {
     process.env.NODE_ENV = 'development';
   }
 
-  if (!process.env.SESSION_SECRET) {
-    throw new Error('SESSION_SECRET environment variable is required');
-  }
-
   app.set('trust proxy', 1);
 
   app.use(
     session({
-      store: storage.sessionStore,
-      secret: process.env.SESSION_SECRET,
+      store: new MemoryStoreSession({
+        checkPeriod: 86400000 // prune expired entries every 24h
+      }),
+      secret: process.env.SESSION_SECRET!,
       resave: false,
       saveUninitialized: false,
       proxy: true,
       cookie: {
-        secure: process.env.NODE_ENV === 'production',
+        secure: false,
         sameSite: 'lax',
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        maxAge: 30 * 24 * 60 * 60 * 1000,
         path: '/'
       }
     })
@@ -76,7 +77,16 @@ export function setupAuth(app: Express) {
   passport.deserializeUser(async (id: string, done) => {
     try {
       const user = await storage.getUser(id);
-      done(null, user || null);
+      if (!user) {
+        const basicUser = {
+          discordId: id,
+          username: id,
+          avatar: null
+        };
+        done(null, basicUser);
+      } else {
+        done(null, user);
+      }
     } catch (error) {
       console.error('Error deserializing user:', error);
       done(error);
@@ -97,11 +107,7 @@ export function setupAuth(app: Express) {
     if (state) {
       req.session.returnTo = state;
     }
-
-    passport.authenticate('discord', {
-      failureRedirect: '/',
-      failureMessage: true
-    })(req, res, next);
+    passport.authenticate('discord')(req, res, next);
   });
 
   app.get('/api/auth/discord/callback',
