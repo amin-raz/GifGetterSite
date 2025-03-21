@@ -3,6 +3,9 @@ import { Strategy as DiscordStrategy } from 'passport-discord';
 import session from 'express-session';
 import { storage } from './storage';
 import { Express } from 'express';
+import MemoryStore from 'memorystore';
+
+const MemoryStoreSession = MemoryStore(session);
 
 export function setupAuth(app: Express) {
   if (!process.env.NODE_ENV) {
@@ -11,18 +14,19 @@ export function setupAuth(app: Express) {
 
   app.set('trust proxy', 1);
 
-  // Use the storage's session store for consistent session handling
   app.use(
     session({
-      store: storage.sessionStore,
+      store: new MemoryStoreSession({
+        checkPeriod: 86400000 // prune expired entries every 24h
+      }),
       secret: process.env.SESSION_SECRET!,
       resave: false,
       saveUninitialized: false,
       proxy: true,
       cookie: {
-        secure: process.env.NODE_ENV === 'production',
+        secure: false,
         sameSite: 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        maxAge: 30 * 24 * 60 * 60 * 1000,
         path: '/'
       }
     })
@@ -31,10 +35,7 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  // Configure Discord Strategy with Replit domain
-  const callbackURL = process.env.NODE_ENV === 'production'
-    ? 'https://gifgetter.replit.app/api/auth/discord/callback'
-    : 'https://' + process.env.REPL_SLUG + '.' + process.env.REPL_OWNER + '.repl.co/api/auth/discord/callback';
+  const callbackURL = 'https://cd8b2f32-42e4-4c51-bc8a-8f1cfb255c3e-00-1fk8ng1yhc5k7.janeway.replit.dev/api/auth/discord/callback';
 
   passport.use(
     new DiscordStrategy(
@@ -42,22 +43,19 @@ export function setupAuth(app: Express) {
         clientID: process.env.VITE_DISCORD_CLIENT_ID!,
         clientSecret: process.env.DISCORD_CLIENT_SECRET!,
         callbackURL,
-        scope: ['identify'],
-        passReqToCallback: true
+        scope: ['identify', 'email']
       },
-      async (req, accessToken, refreshToken, profile, done) => {
+      async (_accessToken, _refreshToken, profile, done) => {
         try {
           const user = {
             discordId: profile.id,
             username: profile.username,
             avatar: profile.avatar ? `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png` : null
           };
-
           const existingUser = await storage.getUser(user.discordId);
           if (existingUser) {
             return done(null, existingUser);
           }
-
           const newUser = await storage.createUser(user);
           return done(null, newUser);
         } catch (error) {
@@ -75,14 +73,23 @@ export function setupAuth(app: Express) {
   passport.deserializeUser(async (id: string, done) => {
     try {
       const user = await storage.getUser(id);
-      done(null, user || null);
+      if (!user) {
+        const basicUser = {
+          discordId: id,
+          username: id,
+          avatar: null
+        };
+        done(null, basicUser);
+      } else {
+        done(null, user);
+      }
     } catch (error) {
       console.error('Error deserializing user:', error);
       done(error);
     }
   });
 
-  // Auth routes with better error handling
+  // Auth routes
   app.get('/api/auth/me', (req, res) => {
     if (req.isAuthenticated()) {
       res.json(req.user);
@@ -96,11 +103,7 @@ export function setupAuth(app: Express) {
     if (state) {
       req.session.returnTo = state;
     }
-
-    passport.authenticate('discord', {
-      failureRedirect: '/',
-      failureMessage: true
-    })(req, res, next);
+    passport.authenticate('discord')(req, res, next);
   });
 
   app.get('/api/auth/discord/callback',

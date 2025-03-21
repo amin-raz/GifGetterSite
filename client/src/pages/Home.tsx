@@ -28,9 +28,7 @@ export default function Home() {
   return (
     <div className="w-full space-y-12">
       <HeroSection />
-      <Features />
 
-      {/* Section 1: Create Perfect GIFs */}
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid gap-12 lg:grid-cols-2 items-center">
@@ -60,7 +58,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Section 2: Share Instantly */}
+      <Features />
+
       <section className="py-12 bg-muted/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid gap-12 lg:grid-cols-2 items-center">
@@ -92,68 +91,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Section 3: Web Converter */}
-      <section className="py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-12 lg:grid-cols-2 items-center">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUpVariant}
-            >
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl mb-4">
-                Convert in Your Browser
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                Want to convert videos to GIFs directly in your browser? 
-                Our web converter makes it easy and fast, with no downloads required.
-              </p>
-            </motion.div>
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUpVariant}
-            >
-              <PlaceholderImage />
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Section 4: How It Works */}
-      <section className="py-12 bg-muted/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-12 lg:grid-cols-2 items-center">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUpVariant}
-              className="lg:order-2"
-            >
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl mb-4">
-                Simple Process, Amazing Results
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                Converting videos to GIFs has never been easier. Upload your video,
-                let our optimized processing handle the rest, and get perfect results every time.
-              </p>
-            </motion.div>
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUpVariant}
-              className="lg:order-1"
-            >
-              <PlaceholderImage />
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
+      <WebConverter />
+      <HowItWorks />
+      <WhyChoose />
       <BottomCTA />
     </div>
   );
