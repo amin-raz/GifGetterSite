@@ -51,6 +51,7 @@ function formatDateTime(date: Date | null): string {
 export default function Feedback() {
   const { toast } = useToast();
   const [page, setPage] = useState(1);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const ITEMS_PER_PAGE = 5;
 
   const { data: feedbackData, isLoading: isLoadingFeedback } = useQuery<{ items: Feedback[], total: number }>({
@@ -79,7 +80,7 @@ export default function Feedback() {
         const error = await response.json();
         throw new Error(error.error || 'Failed to submit feedback');
       }
-      const result = await response.json();
+      await response.json();
 
       queryClient.invalidateQueries({ queryKey: ['/api/feedback'] });
 
@@ -91,6 +92,7 @@ export default function Feedback() {
       });
 
       form.reset();
+      setIsDialogOpen(false);
     } catch (error) {
       toast({
         title: "Submission Error",
@@ -101,6 +103,13 @@ export default function Feedback() {
   };
 
   const totalPages = feedbackData ? Math.ceil(feedbackData.total / ITEMS_PER_PAGE) : 0;
+
+  const handleSubmitClick = async () => {
+    const isValid = await form.trigger();
+    if (isValid) {
+      setIsDialogOpen(true);
+    }
+  };
 
   return (
     <div className="py-16">
@@ -163,10 +172,11 @@ export default function Feedback() {
                   />
 
                   <div className="flex justify-end">
-                    <AlertDialog>
+                    <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                       <AlertDialogTrigger asChild>
                         <Button
                           type="button"
+                          onClick={handleSubmitClick}
                           disabled={form.formState.isSubmitting}
                           className="group"
                         >
