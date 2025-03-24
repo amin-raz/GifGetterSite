@@ -5,6 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { z } from 'zod';
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -101,7 +112,7 @@ export default function Feedback() {
             </CardHeader>
             <CardContent>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <form className="space-y-6">
                   <div className="min-h-[80px]">
                     <FormField
                       control={form.control}
@@ -152,20 +163,38 @@ export default function Feedback() {
                   />
 
                   <div className="flex justify-end">
-                    <Button
-                      type="submit"
-                      disabled={form.formState.isSubmitting}
-                      className="group"
-                    >
-                      {form.formState.isSubmitting ? (
-                        <>
-                          <LoadingSpinner className="h-4 w-4" />
-                          Submitting...
-                        </>
-                      ) : (
-                        'Submit Feedback'
-                      )}
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          type="button"
+                          disabled={form.formState.isSubmitting}
+                          className="group"
+                        >
+                          {form.formState.isSubmitting ? (
+                            <>
+                              <LoadingSpinner className="h-4 w-4" />
+                              Submitting...
+                            </>
+                          ) : (
+                            'Submit Feedback'
+                          )}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Submit Feedback</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to submit this feedback? This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={form.handleSubmit(onSubmit)}>
+                            Submit
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </form>
               </Form>
