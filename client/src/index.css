@@ -54,7 +54,8 @@
 
   html {
     overflow-y: scroll !important;
-    width: 100vw;
+    overflow-x: hidden; /* Added to prevent horizontal scroll */
+    width: 100%; /* Changed from 100vw to prevent potential overflow */
   }
 
   body {
