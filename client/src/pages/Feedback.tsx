@@ -106,7 +106,7 @@ export default function Feedback() {
 
   const handleSubmitClick = async () => {
     const isValid = await form.trigger();
-    if (isValid) {
+    if (isValid && !Object.keys(form.formState.errors).length) {
       setIsDialogOpen(true);
     }
   };
@@ -210,6 +210,7 @@ export default function Feedback() {
               </Form>
             </CardContent>
           </Card>
+
           <Card>
             <CardHeader>
               <CardTitle>Recent Feedback</CardTitle>
