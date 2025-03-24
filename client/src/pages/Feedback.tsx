@@ -106,10 +106,9 @@ export default function Feedback() {
   const totalPages = feedbackData ? Math.ceil(feedbackData.total / ITEMS_PER_PAGE) : 0;
 
   const handleSubmitClick = async () => {
-    // Trigger validation for all fields
-    const isValid = await form.trigger('content');
-    // Only show dialog if form is valid and there are no errors
-    if (isValid && !Object.keys(form.formState.errors).length) {
+    // Trigger validation for all fields before showing dialog
+    await form.trigger();
+    if (form.getValues('content') && !Object.keys(form.formState.errors).length) {
       setIsDialogOpen(true);
     }
   };
