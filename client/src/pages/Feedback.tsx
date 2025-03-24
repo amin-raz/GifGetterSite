@@ -14,7 +14,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
+  //AlertDialogTrigger, // Removed
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { z } from 'zod';
@@ -175,23 +175,21 @@ export default function Feedback() {
 
                   <div className="flex justify-end">
                     <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          type="button"
-                          onClick={handleSubmitClick}
-                          disabled={form.formState.isSubmitting}
-                          className="group"
-                        >
-                          {form.formState.isSubmitting ? (
-                            <>
-                              <LoadingSpinner className="h-4 w-4" />
-                              Submitting...
-                            </>
-                          ) : (
-                            'Submit Feedback'
-                          )}
-                        </Button>
-                      </AlertDialogTrigger>
+                      <Button
+                        type="button"
+                        onClick={handleSubmitClick}
+                        disabled={form.formState.isSubmitting}
+                        className="group"
+                      >
+                        {form.formState.isSubmitting ? (
+                          <>
+                            <LoadingSpinner className="h-4 w-4" />
+                            Submitting...
+                          </>
+                        ) : (
+                          'Submit Feedback'
+                        )}
+                      </Button>
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle>Submit Feedback</AlertDialogTitle>
