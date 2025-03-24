@@ -73,13 +73,16 @@ export default function Feedback() {
       queryClient.invalidateQueries({ queryKey: ['/api/feedback'] });
 
       toast({
-        title: "Feedback submitted",
-        description: "Thank you for your feedback!",
+        title: "Thanks for your feedback! 🎉",
+        description: "Your feedback has been submitted successfully and will help us improve GifGetter.",
+        duration: 5000,
+        className: "bg-primary text-primary-foreground",
       });
+
       form.reset();
     } catch (error) {
       toast({
-        title: "Error",
+        title: "Submission Error",
         description: error instanceof Error ? error.message : 'Failed to submit feedback. Please try again.',
         variant: "destructive",
       });
