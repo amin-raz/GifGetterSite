@@ -99,6 +99,7 @@ export default function Feedback() {
         description: error instanceof Error ? error.message : 'Failed to submit feedback. Please try again.',
         variant: "destructive",
       });
+      setIsDialogOpen(false);
     }
   };
 
