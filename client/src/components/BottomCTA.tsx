@@ -23,7 +23,7 @@ export function BottomCTA() {
         >
           <Button 
             size="lg"
-            className="group bg-[#7289da] hover:bg-[#5d73c7] text-white border-none"
+            className="group bg-[#7289da] hover:bg-[#5d73c7] text-white border-none shadow-md"
           >
             <SiDiscord className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
             Add to Discord
