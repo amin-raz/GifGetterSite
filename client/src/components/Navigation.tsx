@@ -6,6 +6,15 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useEffect, useState } from 'react';
 import { getCurrentUser, getDiscordLoginUrl } from "@/lib/auth";
 import type { User } from "@shared/schema";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { LogOut, User as UserIcon } from "lucide-react";
 
 export function Navigation() {
   const [user, setUser] = useState<User | null>(null);
@@ -64,25 +73,45 @@ export function Navigation() {
             {!loading && (
               <>
                 {user ? (
-                  <div className="flex items-center gap-4">
-                    <Avatar>
-                      {user.avatar ? (
-                        <AvatarImage src={user.avatar} alt={user.username} />
-                      ) : (
-                        <AvatarFallback>
-                          {user.username?.[0]?.toUpperCase() || 'U'}
-                        </AvatarFallback>
-                      )}
-                    </Avatar>
-                    <span className="text-sm font-medium hidden sm:inline">{user.username}</span>
-                    <Button variant="outline" onClick={handleSignOut}>
-                      Sign Out
-                    </Button>
-                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                        <Avatar className="h-8 w-8">
+                          {user.avatar ? (
+                            <AvatarImage src={user.avatar} alt={user.username} />
+                          ) : (
+                            <AvatarFallback>
+                              {user.username?.[0]?.toUpperCase() || 'U'}
+                            </AvatarFallback>
+                          )}
+                        </Avatar>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56" align="end" forceMount>
+                      <DropdownMenuLabel className="font-normal">
+                        <div className="flex flex-col space-y-1">
+                          <p className="text-sm font-medium leading-none">{user.username}</p>
+                          <p className="text-xs leading-none text-muted-foreground">
+                            Discord User
+                          </p>
+                        </div>
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="cursor-pointer">
+                        <UserIcon className="mr-2 h-4 w-4" />
+                        <span>Profile</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive focus:text-destructive">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>Log out</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 ) : (
                   <Button 
                     onClick={() => window.location.href = getDiscordLoginUrl()}
-                    variant="outline"
+                    className="bg-[#5865F2] hover:bg-[#4752C4] text-white"
                   >
                     <SiDiscord className="mr-2 h-4 w-4" />
                     Login with Discord
