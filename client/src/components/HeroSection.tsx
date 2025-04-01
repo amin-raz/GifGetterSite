@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden pt-24 pb-20 bg-primary/5">
+    <section className="relative overflow-hidden pt-40 pb-36 bg-primary/5">
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(var(--primary)/30%),transparent_70%)]"></div>
@@ -13,13 +13,13 @@ export function HeroSection() {
       </div>
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
+        <div className="grid gap-16 lg:grid-cols-2 lg:gap-24 items-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="space-y-8"
+            className="space-y-10"
           >
             <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/[1.1]">
               Convert Videos to GIFs Directly in Discord
@@ -27,20 +27,21 @@ export function HeroSection() {
             <p className="text-muted-foreground text-lg sm:text-xl max-w-[600px]">
               GifGetter makes it easy to create and share GIFs without leaving Discord. Just upload a video and let our bot do the magic.
             </p>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-4 pt-4">
               <a
                 href="https://discord.com/oauth2/authorize?client_id=1299941868724949214"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Button size="lg">
+                <Button size="lg" className="h-14 px-8 text-lg">
                   Add to Discord
                   <SiDiscord className="ml-2 h-5 w-5" />
                 </Button>
               </a>
               <Button 
                 size="lg" 
-                variant="outline" 
+                variant="outline"
+                className="h-14 px-8 text-lg"
                 onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 See Features
