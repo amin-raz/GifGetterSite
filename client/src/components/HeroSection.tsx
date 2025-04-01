@@ -5,10 +5,13 @@ import { motion } from "framer-motion";
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden pt-40 pb-36 bg-[#36393f] text-white">
+    <section className="relative overflow-hidden pt-40 pb-36 bg-[#36393f]/90 text-white">
       {/* Background pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(235,86%,65%),transparent_70%)]"></div>
+      <div className="absolute inset-0">
+        {/* Subtle noise texture */}
+        <div className="absolute inset-0 bg-noise opacity-5"></div>
+        {/* Background gradients */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(235,86%,65%),transparent_70%)] opacity-15"></div>
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-300/20 to-transparent"></div>
       </div>
       
