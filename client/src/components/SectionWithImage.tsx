@@ -9,6 +9,7 @@ interface SectionWithImageProps {
   imagePosition?: "left" | "right";
   className?: string;
   background?: string;
+  id?: string;
 }
 
 export function SectionWithImage({
@@ -18,7 +19,8 @@ export function SectionWithImage({
   image,
   imagePosition = "right",
   className = "",
-  background = "bg-background"
+  background = "bg-background",
+  id
 }: SectionWithImageProps) {
   const fadeInAnimation = {
     hidden: { opacity: 0, y: 20 },
@@ -33,7 +35,7 @@ export function SectionWithImage({
   };
 
   return (
-    <section className={`py-12 ${background} ${className}`}>
+    <section id={id} className={`py-12 ${background} ${className}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-2 items-center">
           {imagePosition === "left" ? (

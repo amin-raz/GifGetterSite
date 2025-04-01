@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden pt-40 pb-36 bg-[#202225] text-white">
+    <section className="relative overflow-hidden pt-40 pb-36 bg-[#23272a] text-white">
       {/* Background pattern */}
       <div className="absolute inset-0">
         {/* Subtle noise texture */}
@@ -36,7 +36,7 @@ export function HeroSection() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Button size="lg" className="bg-[#5865F2] hover:bg-[#4752C4] text-white border-none shadow-md">
+                <Button size="lg" className="bg-[#7289da] hover:bg-[#5d73c7] text-white border-none shadow-md">
                   Add to Discord
                   <SiDiscord className="ml-2 h-5 w-5" />
                 </Button>

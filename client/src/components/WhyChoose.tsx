@@ -54,6 +54,7 @@ export function WhyChoose() {
       content={benefitsContent}
       image={PlaceholderImage}
       imagePosition="right"
+      background="bg-secondary/30"
     />
   );
 }

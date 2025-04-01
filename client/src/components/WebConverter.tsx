@@ -19,7 +19,7 @@ export function WebConverter() {
   };
 
   return (
-    <section className="py-16 bg-gradient-to-b from-background to-muted/20">
+    <section className="py-16 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <motion.div
@@ -52,7 +52,7 @@ export function WebConverter() {
             <Button 
               size="lg"
               onClick={() => setLocation('/converter')}
-              className="group"
+              className="group bg-[#7289da] hover:bg-[#5d73c7] text-white border-none shadow-md"
             >
               Try Web Converter
               <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />

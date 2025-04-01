@@ -55,6 +55,8 @@ export function Features() {
       content={featuresContent}
       image={<PlaceholderImage />}
       imagePosition="right"
+      background="bg-secondary/30"
+      id="features"
     />
   );
 }

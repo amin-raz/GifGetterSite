@@ -111,7 +111,7 @@ export function Navigation() {
                 ) : (
                   <Button 
                     onClick={() => window.location.href = getDiscordLoginUrl()}
-                    className="bg-[#5865F2] hover:bg-[#4752C4] text-white"
+                    className="bg-[#7289da] hover:bg-[#5d73c7] text-white"
                   >
                     <SiDiscord className="mr-2 h-4 w-4" />
                     Login with Discord
