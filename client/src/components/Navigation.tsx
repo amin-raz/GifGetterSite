@@ -52,7 +52,7 @@ export function Navigation() {
   };
 
   return (
-    <nav className="fixed top-0 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 border-b">
+    <nav className="fixed top-0 w-full dark:bg-[#1a1b1e] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 border-b border-border/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link href="/">
@@ -111,7 +111,7 @@ export function Navigation() {
                 ) : (
                   <Button 
                     onClick={() => window.location.href = getDiscordLoginUrl()}
-                    className="bg-[#7289da] hover:bg-[#5d73c7] text-white"
+                    className="bg-[#5865F2] hover:bg-[#4752c4] text-white border-none shadow-md"
                   >
                     <SiDiscord className="mr-2 h-4 w-4" />
                     Login with Discord
