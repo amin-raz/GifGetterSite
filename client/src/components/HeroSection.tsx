@@ -5,11 +5,11 @@ import { motion } from "framer-motion";
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden pt-40 pb-36 bg-primary/5">
+    <section className="relative overflow-hidden pt-40 pb-36 bg-[#36393f] text-white">
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(var(--primary)/30%),transparent_70%)]"></div>
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(235,86%,65%),transparent_70%)]"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-300/20 to-transparent"></div>
       </div>
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
@@ -24,7 +24,7 @@ export function HeroSection() {
             <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/[1.1]">
               Convert Videos to GIFs Directly in Discord
             </h1>
-            <p className="text-muted-foreground text-lg sm:text-xl max-w-[600px]">
+            <p className="text-gray-300 text-lg sm:text-xl max-w-[600px]">
               GifGetter makes it easy to create and share GIFs without leaving Discord. Just upload a video and let our bot do the magic.
             </p>
             <div className="flex flex-wrap gap-4 pt-4">
@@ -33,7 +33,7 @@ export function HeroSection() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Button size="lg">
+                <Button size="lg" className="bg-[#5865F2] hover:bg-[#4752C4] text-white border-none">
                   Add to Discord
                   <SiDiscord className="ml-2 h-5 w-5" />
                 </Button>
@@ -41,6 +41,7 @@ export function HeroSection() {
               <Button 
                 size="lg" 
                 variant="outline"
+                className="border-gray-300 text-white hover:bg-white/10 hover:text-white"
                 onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 See Features
@@ -53,7 +54,7 @@ export function HeroSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="relative aspect-video rounded-lg overflow-hidden shadow-2xl border border-primary/10"
+            className="relative aspect-video rounded-lg overflow-hidden shadow-2xl border border-gray-600"
           >
             <img 
               src="https://images.unsplash.com/photo-1586953208448-b95a79798f07?auto=format&fit=crop&w=800&q=80"
