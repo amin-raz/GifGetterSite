@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden pt-40 pb-36 bg-[#36393f]/90 text-white">
+    <section className="relative overflow-hidden pt-40 pb-36 bg-[#36393e] text-white">
       {/* Background pattern */}
       <div className="absolute inset-0">
         {/* Subtle noise texture */}
@@ -36,14 +36,14 @@ export function HeroSection() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Button size="lg" className="bg-[#5865F2] hover:bg-[#4752C4] text-white border-none">
+                <Button size="lg" className="bg-[#7289da] hover:bg-[#5d73c7] text-white border-none">
                   Add to Discord
                   <SiDiscord className="ml-2 h-5 w-5" />
                 </Button>
               </a>
               <Button 
                 size="lg" 
-                className="bg-gray-700/50 text-white hover:bg-gray-700/70 border-0"
+                className="bg-gray-300 text-[#282b30] hover:bg-gray-200 border-0"
                 onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 See Features
