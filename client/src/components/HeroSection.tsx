@@ -33,7 +33,7 @@ export function HeroSection() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Button size="lg" className="h-14 px-8 text-lg">
+                <Button size="lg">
                   Add to Discord
                   <SiDiscord className="ml-2 h-5 w-5" />
                 </Button>
@@ -41,7 +41,6 @@ export function HeroSection() {
               <Button 
                 size="lg" 
                 variant="outline"
-                className="h-14 px-8 text-lg"
                 onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 See Features
