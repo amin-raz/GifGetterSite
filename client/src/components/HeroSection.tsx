@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden pt-40 pb-36 bg-[#36393e] text-white">
+    <section className="relative overflow-hidden pt-40 pb-36 bg-[#202225] text-white">
       {/* Background pattern */}
       <div className="absolute inset-0">
         {/* Subtle noise texture */}
@@ -56,7 +56,7 @@ export function HeroSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="relative aspect-video rounded-lg overflow-hidden shadow-2xl border border-gray-600"
+            className="relative aspect-video rounded-lg overflow-hidden shadow-2xl border border-[#40444b]"
           >
             <img 
               src="https://images.unsplash.com/photo-1586953208448-b95a79798f07?auto=format&fit=crop&w=800&q=80"
