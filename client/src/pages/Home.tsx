@@ -5,8 +5,7 @@ import { WhyChoose } from "@/components/WhyChoose";
 import { BottomCTA } from "@/components/BottomCTA";
 import { SectionWithImage } from "@/components/SectionWithImage";
 import { Features } from "@/components/Features";
-import { Button } from "@/components/ui/button";
-import { ChevronDown, Zap, Video, Share2, Smile } from "lucide-react";
+import { Zap, Video, Share2, Smile } from "lucide-react";
 import { motion } from "framer-motion";
 
 const PlaceholderImage = () => (
@@ -18,10 +17,6 @@ const PlaceholderImage = () => (
 );
 
 export default function Home() {
-  const handleScrollToNext = () => {
-    document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   const fadeInAnimation = {
     hidden: { opacity: 0, y: 20 },
     show: {
@@ -36,36 +31,14 @@ export default function Home() {
 
   return (
     <div className="w-full">
-      {/* Hero with animated scroll indicator */}
+      {/* Hero section */}
       <HeroSection />
-      <div className="flex justify-center -mt-8 mb-8">
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{
-            duration: 0.5,
-            delay: 1,
-            repeat: Infinity,
-            repeatType: "reverse",
-            repeatDelay: 1
-          }}
-        >
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="rounded-full bg-primary/5 hover:bg-primary/10"
-            onClick={handleScrollToNext}
-          >
-            <ChevronDown className="h-6 w-6" />
-          </Button>
-        </motion.div>
-      </div>
 
       {/* How it works section */}
       <HowItWorks />
 
       {/* Core benefits with gradient background */}
-      <section className="py-24 bg-gradient-to-b from-background to-primary/5">
+      <section id="features" className="py-24 bg-gradient-to-b from-background to-primary/5">
         <div className="container mx-auto px-4">
           <motion.div
             initial="hidden"

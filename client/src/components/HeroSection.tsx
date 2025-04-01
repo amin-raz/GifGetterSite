@@ -1,11 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { SiDiscord } from "react-icons/si";
-import { Video } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden pt-24 pb-16">
+    <section className="relative overflow-hidden pt-24 pb-20 bg-primary/5">
+      {/* Background pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(var(--primary)/30%),transparent_70%)]"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
+      </div>
+      
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
           <motion.div
@@ -32,9 +38,13 @@ export function HeroSection() {
                   <SiDiscord className="ml-2 h-5 w-5" />
                 </Button>
               </a>
-              <Button size="lg" variant="outline" onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}>
-                Learn More
-                <Video className="ml-2 h-5 w-5" />
+              <Button 
+                size="lg" 
+                variant="outline" 
+                onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                See Features
+                <Sparkles className="ml-2 h-5 w-5" />
               </Button>
             </div>
           </motion.div>
@@ -43,7 +53,7 @@ export function HeroSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="relative aspect-video rounded-lg overflow-hidden shadow-2xl"
+            className="relative aspect-video rounded-lg overflow-hidden shadow-2xl border border-primary/10"
           >
             <img 
               src="https://images.unsplash.com/photo-1586953208448-b95a79798f07?auto=format&fit=crop&w=800&q=80"
