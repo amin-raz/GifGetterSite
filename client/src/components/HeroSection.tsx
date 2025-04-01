@@ -36,14 +36,14 @@ export function HeroSection() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Button size="lg" className="bg-[#7289da] hover:bg-[#5d73c7] text-white border-none shadow-md">
+                <Button size="lg" className="bg-[#5865F2] hover:bg-[#4752C4] text-white border-none shadow-md">
                   Add to Discord
                   <SiDiscord className="ml-2 h-5 w-5" />
                 </Button>
               </a>
               <Button 
                 size="lg" 
-                className="bg-gray-300/40 text-white hover:bg-gray-300/60 border-0 backdrop-blur-sm"
+                className="bg-white/10 hover:bg-white/20 text-white border-0 backdrop-blur-sm transition-all duration-300"
                 onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 See Features
