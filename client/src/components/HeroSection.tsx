@@ -40,8 +40,7 @@ export function HeroSection() {
               </a>
               <Button 
                 size="lg" 
-                variant="outline"
-                className="border-gray-300 text-white hover:bg-white/10 hover:text-white"
+                className="bg-white/90 text-[#36393f] hover:bg-white hover:text-[#36393f] border-0"
                 onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 See Features
