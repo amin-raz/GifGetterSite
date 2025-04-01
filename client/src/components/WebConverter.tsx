@@ -52,7 +52,7 @@ export function WebConverter() {
             <Button 
               size="lg"
               onClick={() => setLocation('/converter')}
-              className="group bg-[#5865F2] hover:bg-[#4752c4] text-white border-none shadow-md"
+              className="group bg-[#4752c4] hover:bg-[#3a429e] text-white border-none shadow-md"
             >
               Try Web Converter
               <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />

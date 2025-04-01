@@ -75,7 +75,8 @@ export function Navigation() {
                 {user ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                      <Button variant="ghost" className="flex items-center gap-2">
+                        <span className="hidden sm:inline-block text-sm font-medium">{user.username}</span>
                         <Avatar className="h-8 w-8">
                           {user.avatar ? (
                             <AvatarImage src={user.avatar} alt={user.username} />
@@ -111,7 +112,7 @@ export function Navigation() {
                 ) : (
                   <Button 
                     onClick={() => window.location.href = getDiscordLoginUrl()}
-                    className="bg-[#5865F2] hover:bg-[#4752c4] text-white border-none shadow-md"
+                    className="bg-[#4752c4] hover:bg-[#3a429e] text-white border-none shadow-md"
                   >
                     <SiDiscord className="mr-2 h-4 w-4" />
                     Login with Discord
