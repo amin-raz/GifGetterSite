@@ -58,7 +58,7 @@ export function SectionWithImage({
                   {title}
                 </h2>
                 {description && (
-                  <p className="text-muted-foreground mb-6">{description}</p>
+                  <p className="text-lg text-muted-foreground mb-6">{description}</p>
                 )}
                 {content}
               </motion.div>
@@ -75,7 +75,7 @@ export function SectionWithImage({
                   {title}
                 </h2>
                 {description && (
-                  <p className="text-muted-foreground mb-6">{description}</p>
+                  <p className="text-lg text-muted-foreground mb-6">{description}</p>
                 )}
                 {content}
               </motion.div>
