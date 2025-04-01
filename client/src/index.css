@@ -12,48 +12,50 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 238 83.3% 58.8%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 238 83.3% 58.8%;
+    /* Discord light theme colors */
+    --background: 210 9% 98%; /* #F8F9FA - Discord light background */
+    --foreground: 223 7% 20%; /* #313338 - Discord dark text */
+    --card: 0 0% 100%; /* #FFFFFF - Pure white for cards */
+    --card-foreground: 223 7% 20%; /* #313338 - Discord dark text */
+    --popover: 0 0% 100%; /* #FFFFFF - White popover */
+    --popover-foreground: 223 7% 20%; /* #313338 - Discord dark text */
+    --primary: 235 86% 65%; /* #5865F2 - Discord Blurple */
+    --primary-foreground: 0 0% 100%; /* #FFFFFF - White text on primary */
+    --secondary: 210 9% 96%; /* #E3E5E8 - Discord light secondary */
+    --secondary-foreground: 223 7% 20%; /* #313338 - Discord dark text */
+    --muted: 210 9% 94%; /* #DBDEE1 - Discord light muted */
+    --muted-foreground: 214 8% 51%; /* #80848E - Discord muted text */
+    --accent: 235 86% 65%; /* #5865F2 - Discord Blurple */
+    --accent-foreground: 0 0% 100%; /* #FFFFFF - White text on accent */
+    --destructive: 0 84% 60%; /* #ED4245 - Discord red */
+    --destructive-foreground: 0 0% 100%; /* #FFFFFF - White text on destructive */
+    --border: 216 7% 85%; /* #D4D7DC - Discord light border */
+    --input: 216 7% 85%; /* #D4D7DC - Discord light input */
+    --ring: 235 86% 65%; /* #5865F2 - Discord Blurple */
     --radius: 0.75rem;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 238 83.3% 58.8%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 238 83.3% 58.8%;
+    /* Discord dark theme colors */
+    --background: 223 7% 21%; /* #313338 - Discord dark background */
+    --foreground: 210 9% 98%; /* #F8F9FA - Discord light text */
+    --card: 216 7% 14%; /* #232428 - Discord dark card */
+    --card-foreground: 210 9% 98%; /* #F8F9FA - Discord light text */
+    --popover: 223 7% 21%; /* #313338 - Discord dark background */
+    --popover-foreground: 210 9% 98%; /* #F8F9FA - Discord light text */
+    --primary: 235 86% 65%; /* #5865F2 - Discord Blurple */
+    --primary-foreground: 0 0% 100%; /* #FFFFFF - White text on primary */
+    --secondary: 223 7% 15%; /* #2B2D31 - Discord dark secondary */
+    --secondary-foreground: 210 9% 98%; /* #F8F9FA - Discord light text */
+    --muted: 223 7% 15%; /* #2B2D31 - Discord dark muted */
+    --muted-foreground: 217 8% 64%; /* #9CA3AF - Discord muted text */
+    --accent: 235 86% 65%; /* #5865F2 - Discord Blurple */
+    --accent-foreground: 0 0% 100%; /* #FFFFFF - White text on accent */
+    --destructive: 0 84% 60%; /* #ED4245 - Discord red */
+    --destructive-foreground: 0 0% 100%; /* #FFFFFF - White text on destructive */
+    --border: 223 7% 15%; /* #2B2D31 - Discord dark border */
+    --input: 223 7% 15%; /* #2B2D31 - Discord dark input */
+    --ring: 235 86% 65%; /* #5865F2 - Discord Blurple */
   }
 
   * {
