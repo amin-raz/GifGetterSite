@@ -33,6 +33,7 @@
     --input: 202 15% 75%; /* Lighter version of #99aab5 for inputs */
     --ring: 235 86% 60%; /* #4752c4 - Even Stronger Discord Blurple */
     --radius: 0.75rem;
+    transition: all 200ms ease-in-out;
   }
 
   .dark {
