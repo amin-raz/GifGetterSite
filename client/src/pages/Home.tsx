@@ -38,7 +38,7 @@ export default function Home() {
       <HowItWorks />
 
       {/* Core benefits with gradient background */}
-      <section id="features" className="py-24 bg-gradient-to-b from-background to-primary/5 transition-all duration-200">
+      <section id="features" className="py-24 bg-gradient-to-b from-background to-primary/5">
         <div className="container mx-auto px-4">
           <motion.div
             initial="hidden"
