@@ -6,7 +6,7 @@ export default function GifConverter() {
     <section className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl mx-auto">
-          <Card className="group transition-colors duration-300 hover:bg-primary/5">
+          <Card className="group transition-colors duration-300">
             <CardHeader>
               <CardTitle className="transition-colors duration-300 group-hover:text-primary">
                 Convert Video to GIF
