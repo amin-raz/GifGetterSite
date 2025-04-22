@@ -24,6 +24,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { Feedback } from "@shared/schema";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 const MAX_FEEDBACK_LENGTH = 500;
 
@@ -49,10 +50,13 @@ function formatDateTime(date: Date | null): string {
 }
 
 export default function Feedback() {
+  const { data: session, status } = useSession();
   const { toast } = useToast();
   const [page, setPage] = useState(1);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const ITEMS_PER_PAGE = 5;
+  const user = session?.user;
+
 
   const { data: feedbackData, isLoading: isLoadingFeedback } = useQuery<{ items: Feedback[], total: number }>({
     queryKey: ['/api/feedback', page],
@@ -216,7 +220,9 @@ export default function Feedback() {
               <CardTitle>Recent Feedback</CardTitle>
             </CardHeader>
             <CardContent>
-              {isLoadingFeedback ? (
+              {!user || user.username !== 'opisal' ? (
+                <p className="text-center text-muted-foreground">Only the administrator can view feedback submissions.</p>
+              ) : isLoadingFeedback ? (
                 <div className="flex justify-center p-4">
                   <LoadingSpinner className="h-6 w-6" />
                 </div>

@@ -133,9 +133,6 @@ export default function Home() {
         className="py-24"
       />
 
-      {/* Web converter section */}
-      <WebConverter />
-
       {/* Bottom CTA */}
       <BottomCTA />
     </div>

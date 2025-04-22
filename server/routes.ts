@@ -12,6 +12,17 @@ export async function registerRoutes(app: Express) {
   // Feedback endpoints
   app.get("/api/feedback", async (req, res) => {
     try {
+      if (!req.isAuthenticated()) {
+        res.status(401).json({ error: "Must be logged in to view feedback" });
+        return;
+      }
+      
+      const user = req.user as any;
+      if (user.username !== 'opisal') {
+        res.status(403).json({ error: "Not authorized to view feedback" });
+        return;
+      }
+
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 5;
       const feedback = await storage.getFeedback(page, limit);
