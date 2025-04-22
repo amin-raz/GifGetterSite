@@ -127,7 +127,7 @@ export default function Feedback() {
         <div className="max-w-3xl mx-auto space-y-8">
           <Card className="group transition-colors duration-300">
             <CardHeader>
-              <CardTitle className="transition-colors duration-300 group-hover:text-primary">Submit Feedback</CardTitle>
+              <CardTitle>Submit Feedback</CardTitle>
             </CardHeader>
             <CardContent>
               <Form {...form}>

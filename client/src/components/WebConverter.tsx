@@ -32,7 +32,7 @@ export function WebConverter() {
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl mb-4">
               Web Converter
             </h2>
-            <p className="text-lg text-muted-foreground mb-6 hover:text-muted-foreground">
+            <p className="text-lg text-muted-foreground mb-6">
               Don't want to use Discord? We've got you covered. Use our web-based converter to transform your videos into high-quality GIFs instantly.
             </p>
             <ul className="space-y-3 mb-8">
@@ -59,7 +59,7 @@ export function WebConverter() {
               <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Button>
           </motion.div>
-          
+
           <motion.div
             initial="hidden"
             whileInView="show"
