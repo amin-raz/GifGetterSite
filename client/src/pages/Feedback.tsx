@@ -248,7 +248,7 @@ export default function Feedback() {
                             {formatDateTime(feedback.createdAt)}
                           </span>
                         </div>
-                        <p className="text-sm text-muted-foreground transition-colors duration-300 group-hover:text-primary/80">
+                        <p className="text-sm text-muted-foreground">
                           {feedback.content}
                         </p>
                       </div>
