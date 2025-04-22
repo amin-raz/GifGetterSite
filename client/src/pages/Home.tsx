@@ -38,8 +38,9 @@ export default function Home() {
       <HowItWorks />
 
       {/* Core benefits with gradient background */}
-      <section id="features" className="py-24 bg-gradient-to-b from-background to-primary/5">
-        <div className="container mx-auto px-4">
+      <section id="features" className="py-24 bg-gradient-to-b from-background to-primary/5 relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:16px]" />
+        <div className="container mx-auto px-4 relative">
           <motion.div
             initial="hidden"
             whileInView="show"
@@ -47,7 +48,12 @@ export default function Home() {
             variants={fadeInAnimation}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-4">
+            <div className="inline-block">
+              <span className="inline-block px-4 py-1.5 rounded-full text-sm font-medium bg-primary/10 text-primary mb-4">
+                Features
+              </span>
+            </div>
+            <h2 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
               Why You'll Love GifGetter
             </h2>
             <p className="text-muted-foreground text-lg max-w-3xl mx-auto">
