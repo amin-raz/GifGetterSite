@@ -23,8 +23,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useQuery } from "@tanstack/react-query";
 import type { Feedback } from "@shared/schema";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { getCurrentUser } from "@/lib/auth";
 import type { User } from "@shared/schema";
 
