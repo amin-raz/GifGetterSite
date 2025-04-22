@@ -59,8 +59,7 @@ export function HowItWorks() {
               >
                 <Card className="w-full max-w-md relative bg-card/50 backdrop-blur-sm border-primary/10">
                   <CardContent className="p-6">
-                    <div className="absolute top-1/2 -translate-y-1/2 bg-background rounded-full p-2 border-4 border-primary/20
-                      ${index % 2 === 0 ? "-right-12" : "-left-12"}">
+                    <div className={`absolute top-1/2 -translate-y-1/2 bg-background rounded-full p-2 border-4 border-primary/20 ${index % 2 === 0 ? "-right-12" : "-left-12"}`}>
                       <step.icon className="h-6 w-6 text-primary" />
                     </div>
                     <div className="flex flex-col">
