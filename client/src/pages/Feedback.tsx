@@ -24,7 +24,9 @@ import { useQuery } from "@tanstack/react-query";
 import type { Feedback } from "@shared/schema";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { getCurrentUser } from "@/lib/auth";
+import type { User } from "@shared/schema";
 
 const MAX_FEEDBACK_LENGTH = 500;
 
@@ -50,12 +52,15 @@ function formatDateTime(date: Date | null): string {
 }
 
 export default function Feedback() {
-  const { data: session, status } = useSession();
   const { toast } = useToast();
   const [page, setPage] = useState(1);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
   const ITEMS_PER_PAGE = 5;
-  const user = session?.user;
+
+  useEffect(() => {
+    getCurrentUser().then(setUser);
+  }, []);
 
 
   const { data: feedbackData, isLoading: isLoadingFeedback } = useQuery<{ items: Feedback[], total: number }>({
