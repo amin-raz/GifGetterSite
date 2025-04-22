@@ -68,7 +68,7 @@ export function WebConverter() {
             className="relative"
           >
             <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/20 to-primary/40 rounded-lg blur-lg opacity-75"></div>
-            <div className="relative bg-card rounded-lg shadow-lg overflow-hidden p-8">
+            <div className="relative bg-card/80 rounded-lg shadow-md overflow-hidden p-8 backdrop-blur-sm">
               <div className="flex justify-center mb-6">
                 <div className="p-4 rounded-full bg-primary/10">
                   <Monitor className="h-10 w-10 text-primary" />

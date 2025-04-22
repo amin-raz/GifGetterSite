@@ -234,7 +234,7 @@ export default function Feedback() {
                 <>
                   <div className="space-y-4">
                     {feedbackData.items.map((feedback) => (
-                      <div key={feedback.id} className="p-4 rounded-lg border group transition-colors duration-300 hover:bg-primary/5">
+                      <div key={feedback.id} className="p-4 rounded-lg border">
                         <div className="flex justify-between items-start mb-2">
                           <div className="flex items-center gap-2">
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent text-accent-foreground">
