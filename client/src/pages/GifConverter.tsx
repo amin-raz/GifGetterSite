@@ -9,7 +9,7 @@ export default function GifConverter() {
           <Card>
             <CardHeader>
               <CardTitle>
-                Convert Video to GIF
+                Convert Video to GIF (COMING SOON TO WEB!)
               </CardTitle>
             </CardHeader>
             <CardContent>

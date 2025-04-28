@@ -17,7 +17,7 @@ export function BottomCTA() {
           Ready to Transform Your GIFs?
         </h2>
         <a
-          href="https://discord.com/oauth2/authorize?client_id=1299941868724949214"
+          href="https://discord.com/oauth2/authorize?client_id=1299941868724949214&permissions=109568&scope=bot"
           target="_blank"
           rel="noopener noreferrer"
         >
